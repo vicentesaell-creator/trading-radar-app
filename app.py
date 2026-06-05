@@ -29,7 +29,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("Hidalgo Trading Radar 🚀")
+st.title("Alpha Radar 🚀")
 st.write("Filtro móvil de valor, momentum y análisis de fundamentos.")
 
 # Lista de activos optimizada ($5 - $20)
