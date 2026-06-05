@@ -1,28 +1,36 @@
+
 import streamlit as st
 import yfinance as yf
 import pandas as pd
 
-# 1. Configuración de la página (Modo móvil optimizado)
+# 1. Configuración de la página (Fuerza el Modo Oscuro Premium y Vista Móvil)
 st.set_page_config(page_title="Hidalgo Trading Radar", page_icon="🚀", layout="centered")
 
-# Estilos visuales oscuros y limpios tipo Investing/TC2000
 st.markdown("""
     <style>
-    .main { background-color: #0e1117; }
+    /* Fondo general oscuro estilo terminal de trading */
+    .stApp { background-color: #0b0e14; color: #ffffff; }
+    
+    /* Botón Principal Inteligente */
     div.stButton > button:first-child {
-        background-color: #2ecc71; color: white; width: 100%; 
-        border-radius: 8px; padding: 12px; font-weight: bold; border: none;
+        background: linear-gradient(135deg, #2ecc71, #27ae60);
+        color: white; width: 100%; border-radius: 10px; 
+        padding: 14px; font-weight: bold; border: none; font-size: 16px;
+        box-shadow: 0px 4px 15px rgba(46, 204, 113, 0.3);
     }
-    .card-compras { background-color: #1f242d; padding: 15px; border-radius: 10px; border-left: 5px solid #2ecc71; margin-bottom: 10px; }
-    .card-tecnico { background-color: #1f242d; padding: 15px; border-radius: 10px; border-left: 5px solid #3498db; margin-bottom: 10px; }
-    .card-espera { background-color: #1f242d; padding: 15px; border-radius: 10px; border-left: 5px solid #f1c40f; margin-bottom: 10px; }
-    .ticker-title { font-size: 20px; font-weight: bold; color: #ffffff; }
-    .badge { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; color: white; }
+    
+    /* Tarjetas de los Activos Estilo Premium */
+    .card-compras { background-color: #161a23; padding: 16px; border-radius: 12px; border-left: 6px solid #2ecc71; margin-bottom: 12px; }
+    .card-tecnico { background-color: #161a23; padding: 16px; border-radius: 12px; border-left: 6px solid #3498db; margin-bottom: 12px; }
+    .card-espera { background-color: #161a23; padding: 16px; border-radius: 12px; border-left: 6px solid #f1c40f; margin-bottom: 12px; }
+    
+    .ticker-title { font-size: 22px; font-weight: bold; color: #ffffff; letter-spacing: 0.5px; }
+    .badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; color: white; display: inline-block; margin-top: 5px; }
     </style>
 """, unsafe_allow_html=True)
 
 st.title("Hidalgo Trading Radar 🚀")
-st.write("Filtro móvil de valor y momentum en tiempo real.")
+st.write("Filtro móvil de valor, momentum y análisis de fundamentos.")
 
 # Lista de activos optimizada ($5 - $20)
 todo_wall_street = [
@@ -33,20 +41,25 @@ todo_wall_street = [
 ]
 tickers_finales = list(set(todo_wall_street))
 
-# Botón gigante para ejecutar el escáner desde el celular
 if st.button("🔄 ESCANEAR WALL STREET AHORA"):
-    st.write("🌐 Conectándose a los servidores de la bolsa... Analizando gráficos diarios...")
+    st.write("🌐 Conectándose a Wall Street... Extrayendo métricas de Sardiña e Indicadores...")
     
     resultados = []
     
     for ticker in tickers_finales:
         try:
             stock = yf.Ticker(ticker)
+            
+            # Solución definitiva al error $nan leyendo el historial ultra-rápido reciente
+            hist_reciente = stock.history(period="5d")
+            if hist_reciente.empty: continue
+            c_close = hist_reciente['Close'].iloc[-1]
+            
             info = stock.info
-            price = info.get("currentPrice", info.get("regularMarketPrice", 0))
             volume = info.get("averageVolume", 0)
             
-            if not (5 <= price <= 20) or volume < 500000: continue
+            # Filtro básico de precio y volumen mínimo
+            if not (5 <= c_close <= 20) or volume < 500000: continue
                 
             pe_ratio = info.get("trailingPE", "N/A")
             peg_ratio = info.get("pegRatio", "N/A")
@@ -54,12 +67,11 @@ if st.button("🔄 ESCANEAR WALL STREET AHORA"):
             hist = stock.history(period="250d")
             if len(hist) < 210: continue
                 
-            # Indicadores de tus pantallas de TC2000
+            # Indicadores de TC2000
             hist['EMA20'] = hist['Close'].ewm(span=20, adjust=False).mean()
             hist['MA100'] = hist['Close'].rolling(window=100).mean()
             hist['MA200'] = hist['Close'].rolling(window=200).mean()
             
-            c_close = hist['Close'].iloc[-1]
             c_ema20 = hist['EMA20'].iloc[-1]
             c_ma100 = hist['MA100'].iloc[-1]
             c_ma200 = hist['MA200'].iloc[-1]
@@ -81,7 +93,7 @@ if st.button("🔄 ESCANEAR WALL STREET AHORA"):
                 if isinstance(peg_ratio, (int, float)) and peg_ratio < 1.5:
                     is_undervalued = True
 
-            # Radar de Momentum para celulares
+            # Filtros de Momentum
             detalles_tecnicos = "Tendencia Estable"
             badge_color = "#7f8c8d" 
             
@@ -93,11 +105,11 @@ if st.button("🔄 ESCANEAR WALL STREET AHORA"):
                     detalles_tecnicos = "🔥 ROMPIENDO MA 200"
                     badge_color = "#e67e22" 
                 else:
-                    detalles_tecnicos = "⚠️ CECA TECHO MA 200"
+                    detalles_tecnicos = "⚠️ CERCA TECHO MA 200"
                     badge_color = "#d35400" 
             elif c_close > c_ema20:
                 detalles_tecnicos = "📈 ALCISTA SOBRE EMA 20"
-                badge_color = "#2c3e50"
+                badge_color = "#34495e"
 
             # Semáforo de estados
             if is_undervalued and c_close > c_ema20:
@@ -120,19 +132,28 @@ if st.button("🔄 ESCANEAR WALL STREET AHORA"):
         except:
             continue
 
-    # Desplegar las tarjetas en formato lista vertical tipo app móvil
+    # Desplegar las tarjetas interactivas optimizadas para el celular
     if resultados:
         st.success(f"Se encontraron {len(resultados)} activos analizados:")
         for res in resultados:
+            # Estructura visual HTML de la tarjeta
             st.markdown(f"""
                 <div class="{res['class']}">
                     <span class="ticker-title">{res['ticker']}</span> &nbsp;&nbsp; 
-                    <span style="color: #bbb; font-size: 14px;">Precio: <b>{res['price']}</b> | RSI: <b>{res['rsi']}</b> | Vol: <b>{res['vol']}</b></span>
-                    <div style="margin-top: 8px;">
+                    <span style="color: #a0aab5; font-size: 15px;">Precio: <b>{res['price']}</b> | RSI: <b>{res['rsi']}</b> | Vol: <b>{res['vol']}</b></span>
+                    <div style="margin-top: 6px;">
                         <span class="badge" style="background-color: {res['badge_c']};">{res['tech']}</span>
                         <span class="badge" style="background-color: {res['scolor']}; float: right;">{res['status']}</span>
                     </div>
                 </div>
             """, unsafe_allow_html=True)
+            
+            # Filtro interactivo del libro de Yoel Sardiña desplegable debajo de cada tarjeta
+            with st.expander(f"📋 Filtro de Cuentas Millonarias ({res['ticker']})"):
+                st.write("**Pasa el activo por el filtro del libro:**")
+                st.checkbox("📊 1. Historial Financiero (¿Ingresos constantes y deudas bajo control?)", key=f"c1_{res['ticker']}")
+                st.checkbox("🧠 2. Modelo de Negocio (¿Tiene ventaja competitiva clara a futuro?)", key=f"c2_{res['ticker']}")
+                st.checkbox("👥 3. Liderazgo (¿Los jefes toman decisiones acertadas?)", key=f"c3_{res['ticker']}")
+                st.checkbox("🎯 4. Valoración (¿Está por debajo de su valor intrínseco real?)", key=f"c4_{res['ticker']}")
     else:
-        st.warning("No hay activos que cumplan las condiciones estrictas hoy.")
+        st.warning("No hay activos que cumplan las condiciones hoy.")
