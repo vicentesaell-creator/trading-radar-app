@@ -28,6 +28,12 @@ st.markdown("""
     .badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; color: white; display: inline-block; margin-top: 5px; }
     </style>
 """, unsafe_allow_html=True)
+# Carga la portada super pro (asegúrate de que el archivo se llame cover.png en GitHub)
+import os
+image_path = os.path.join(os.getcwd(), 'cover.png')
+if os.path.exists(image_path):
+    st.image(image_path, use_container_width=True)
+
 
 st.title("Alpha Radar 🚀")
 st.write("Filtro móvil de valor, momentum y análisis de fundamentos.")
