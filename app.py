@@ -4,10 +4,10 @@ import yfinance as yf
 import pandas as pd
 
 # 1. Configuración de la página (Fuerza el Modo Oscuro Premium y Vista Móvil)
-st.set_page_config(page_title="Alpha Radar 🚀", page_icon="🚀", layout="centered")
+st.set_page_config(page_title="Alpha Radar 🚀", page_icon="📡", layout="centered")
 
 # Enlace oculto para que el iPhone reconozca la portada como el icono de la app
-st.markdown('<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/vicentesael-creator/trading-radar-app/main/cover.png">', unsafe_allow_html=True)
+st.markdown('<link rel="apple-touch-icon" href="https://emojicdn.elk.sh/📡?style=apple">', unsafe_allow_html=True)
 st.markdown("""
     <style>
     /* Fondo general oscuro estilo terminal de trading */
