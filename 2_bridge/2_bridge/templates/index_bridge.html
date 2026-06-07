@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alpha Radar Mobile</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #38bdf8;
+            font-size: 24px;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        .subtitle {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 350px;
+        }
+        button {
+            background-color: #1e293b;
+            color: #f8fafc;
+            border: 2px solid #38bdf8;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        button:active {
+            transform: scale(0.98);
+            background-color: #38bdf8;
+            color: #0f172a;
+        }
+        .results-area {
+            margin-top: 30px;
+            width: 100%;
+            max-width: 350px;
+            background-color: #1e293b;
+            border-radius: 12px;
+            padding: 15px;
+            box-sizing: border-box;
+            border: 1px solid #334155;
+            min-height: 150px;
+        }
+        .results-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            color: #94a3b8;
+            letter-spacing: 0.05em;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 5px;
+        }
+        .log-output {
+            font-family: "Courier New", Courier, monospace;
+            font-size: 13px;
+            color: #38bdf8;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>ALPHA RADAR</h1>
+    <div class="subtitle">Escáner de Mercado en Vivo ($5 - $40)</div>
+
+    <div class="btn-container">
+        <button onclick="lanzarEscaneo('sp500')">📊 Escanear S&P 500</button>
+        <button onclick="lanzarEscaneo('nasdaq')">💻 Escanear NASDAQ 100</button>
+        <button onclick="lanzarEscaneo('dow')">🏭 Escanear DOW JONES</button>
+    </div>
+
+    <div class="results-area">
+        <div class="results-title">Resultados del Escáner</div>
+        <div id="output" class="log-output">Selecciona un índice para iniciar el análisis en tiempo real...</div>
+    </div>
+
+    <script>
+        function lanzarEscaneo(indice) {
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = `⏳ Conectando al puente...\n🚀 Escaneando ${indice.toUpperCase()} en vivo...\n(Filtrando rango $5 - $40 y métrica RICOM)`;
+            
+            // Hace la llamada en vivo a nuestro archivo app_bridge.py
+            fetch(`/scan/${indice}`)
+                .then(response => response.json())
+                .then(data => {
+                    if(data.status === "success") {
+                        outputDiv.innerHTML = `✅ ¡Orden recibida!\n${data.message}\n\n[Esperando procesamiento de datos...]`;
+                    } else {
+                        outputDiv.innerHTML = `❌ Error en el puente:\n${data.message}`;
+                    }
+                })
+                .catch(error => {
+                    outputDiv.innerHTML = `❌ Sin conexión:\nNo se pudo comunicar con el servidor de la app.`;
+                });
+        }
+    </script>
+
+</body>
+</html>
