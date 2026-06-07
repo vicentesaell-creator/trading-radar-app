@@ -176,7 +176,7 @@
             <div id="ticker-analisis-header" class="selected-ticker-badge">Ningún activo seleccionado</div>
             
             <div class="card">
-                <h2>📊 Gráfica en Vivo (TradingView)</h2>
+                <h2>📊 Gráfica en Vivo</h2>
                 <div class="widget-container" style="height: 350px;" id="tv-chart-wrapper">
                     <p style="padding: 20px; color: #90a4ae;">Selecciona una acción en el Radar para cargar la gráfica operativa.</p>
                 </div>
@@ -238,12 +238,12 @@
             document.getElementById('page-' + pageId).classList.add('active');
             element.classList.add('active');
 
-            // Si entra a la pantalla de análisis y hay un ticker, recarga los widgets para que se ajusten bien
             if (pageId === 'noticias' && tickerSeleccionado) {
                 cargarAnalisisGrafico(tickerSeleccionado);
             }
         }
 
+        // 📡 LECTURA REPARADA: Lee exactamente lo que genera tu Python
         function cargarDatosRadar() {
             const resultsContainer = document.getElementById('radar-results');
             resultsContainer.innerHTML = `
@@ -266,19 +266,20 @@
 
                     resultsContainer.innerHTML = '';
 
+                    // Pintamos las tarjetas respetando tus variables acordadas
                     data.forEach(accion => {
                         resultsContainer.innerHTML += `
                             <div class="card ticker-card" onclick="seleccionarActivo('${accion.ticker}')">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                     <h3 style="color: #ffffff; font-size: 1.3rem; font-weight: bold;">${accion.ticker} ⚡</h3>
-                                    <span style="background-color: rgba(0, 230, 118, 0.1); color: #00e676; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">Vol. Rel: ${accion.vol_rel} 🔥</span>
+                                    <span style="background-color: rgba(0, 230, 118, 0.1); color: #00e676; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">Recom: ${accion.recomendacion || 'N/A'} 🏢</span>
                                 </div>
-                                <p style="font-size: 1.1rem; font-weight: bold; color: #00e676; margin-bottom: 12px;">Precio: $${accion.precio}</p>
+                                <p style="font-size: 1.1rem; font-weight: bold; color: #00e676; margin-bottom: 12px;">Precio Actual: $${accion.precio_actual || accion.precio}</p>
+                                <p style="font-size: 0.9rem; color: #90a4ae; margin-bottom: 10px;">Target Price: <strong style="color: #00e676;">$${accion.target_price || 'N/A'}</strong></p>
                                 
                                 <div style="background-color: #0d0f12; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; font-size: 0.85rem; border: 1px solid #1f242d;">
-                                    <div><span style="color: #90a4ae;">Entrada:</span> <strong style="color: #fff;">$${accion.entrada}</strong></div>
-                                    <div><span style="color: #90a4ae;">Target:</span> <strong style="color: #00e676;">$${accion.target}</strong></div>
-                                    <div><span style="color: #90a4ae;">Stop:</span> <strong style="color: #ff5252;">$${accion.stop}</strong></div>
+                                    <div><span style="color: #90a4ae;">Rango Entrada:</span> <strong style="color: #fff;">${accion.rango_entrada || 'N/A'}</strong></div>
+                                    <div><span style="color: #90a4ae;">Rango Salida:</span> <strong style="color: #ff5252;">${accion.rango_salida || 'N/A'}</strong></div>
                                 </div>
                                 <p style="font-size:0.75rem; color:#00e676; text-align:right; margin-top:8px;">Toca para analizar 📊</p>
                             </div>
@@ -296,7 +297,6 @@
 
         function seleccionarActivo(ticker) {
             tickerSeleccionado = ticker;
-            // Nos movemos automáticamente a la pestaña de análisis
             const navAnalisis = document.querySelectorAll('.nav-item')[2];
             switchPage('noticias', navAnalisis);
         }
@@ -304,11 +304,11 @@
         function cargarAnalisisGrafico(ticker) {
             document.getElementById('ticker-analisis-header').innerText = `Activo Seleccionado: ${ticker}`;
 
-            // 1. Inyectar la gráfica interactiva avanzada de TradingView en tiempo real
+            // Inyectar gráfica limpia interactiva
             document.getElementById('tv-chart-wrapper').innerHTML = `<div id="tv-chart-container" style="height:100%;"></div>`;
             new TradingView.widget({
                 "autosize": true,
-                "symbol": "NASDAQ:" + ticker,
+                "symbol": ticker, // Quitamos el candado "NASDAQ:" para que busque en NYSE o donde pertenezca solo con el ticker
                 "interval": "D",
                 "timezone": "Etc/UTC",
                 "theme": "dark",
@@ -318,24 +318,20 @@
                 "enable_publishing": false,
                 "hide_side_toolbar": true,
                 "allow_symbol_change": false,
-                "container_id": "tv-chart-container",
-                "studies": [
-                    "MASimple@tv-basicstudies", // Media móvil simple
-                    "RSI@tv-basicstudies"       // RSI para ver sobrecompra/sobreventa
-                ]
+                "container_id": "tv-chart-container"
             });
 
-            // 2. Inyectar el Termómetro de Resumen Técnico Estilo Google Finance
+            // Inyectar Perfil Técnico Técnico Estilo Google Finance
             document.getElementById('tv-technical-wrapper').innerHTML = `
                 <div class="tradingview-widget-container">
-                    <iframe src="https://s.tradingview.com/embed-widget/technical-analysis/?locale=es&symbol=NASDAQ%3A${ticker}&interval=1D&width=100%25&height=180&theme=dark" style="width: 100%; height: 180px; border: none; overflow: hidden;"></iframe>
+                    <iframe src="https://s.tradingview.com/embed-widget/technical-analysis/?locale=es&symbol=${ticker}&interval=1D&width=100%25&height=180&theme=dark" style="width: 100%; height: 180px; border: none; overflow: hidden;"></iframe>
                 </div>
             `;
 
-            // 3. Inyectar el flujo de Noticias de última hora y Earnings Calendars de ese activo específico
+            // Inyectar flujo de Noticias y Earnings
             document.getElementById('tv-news-wrapper').innerHTML = `
                 <div class="tradingview-widget-container">
-                    <iframe src="https://s.tradingview.com/embed-widget/timeline/?locale=es&symbol=NASDAQ%3A${ticker}&width=100%25&height=300&theme=dark" style="width: 100%; height: 300px; border: none; overflow: hidden;"></iframe>
+                    <iframe src="https://s.tradingview.com/embed-widget/timeline/?locale=es&symbol=${ticker}&width=100%25&height=300&theme=dark" style="width: 100%; height: 300px; border: none; overflow: hidden;"></iframe>
                 </div>
             `;
         }
