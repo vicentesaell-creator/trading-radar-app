@@ -27,16 +27,15 @@ def procesar_lista_activos(tickers, nombre_mercado):
             hist = asset.history(period='1y')
             if hist.empty or len(hist) < 200: continue
             last_close = hist['Close'].iloc[-1]
-            if not (5 <= last_close <= 40): continue
+           if not (5 <= last_close <= 50): continue
             
             pe = info.get('trailingPE')
             if not pe or pe >= 20: continue
             
-            rev_growth = info.get('revenueGrowth')
-            if not rev_growth or rev_growth < 0.10: continue
+            
             
             target_price = info.get('targetMeanPrice')
-            if not target_price or target_price < (last_close * 1.50): continue
+            if not target_price or target_price < (last_close * 1.15): continue
             
             debt_to_equity = info.get('debtToEquity')
             if debt_to_equity is not None and (debt_to_equity / 100.0) >= 1: continue
@@ -68,9 +67,7 @@ def procesar_lista_activos(tickers, nombre_mercado):
             avg_volume = hist['Volume'].tail(20).mean()
             if avg_volume <= 100000: continue
             
-            volume_hoy = hist['Volume'].iloc[-1]
-            relative_volume = volume_hoy / avg_volume if avg_volume > 0 else 0
-            if relative_volume <= 1.5: continue
+            
             
             # --- CONTROL DE RIESGO (RICOM) ---
             ricom_calculado = round((last_close / sma20) * (1 + (1 / relative_volume)), 2)
