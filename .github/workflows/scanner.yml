@@ -1,0 +1,37 @@
+name: Escáner Diario de Mercado Real
+
+on:
+  # Te permite activar el escáner manualmente dándole a un botón cuando tú quieras
+  workflow_dispatch:
+  # Se ejecuta automáticamente de lunes a viernes a las 7:00 AM EST (Antes de la apertura)
+  schedule:
+    - cron: '0 11 * * 1-5'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Copiando el repositorio
+      uses: actions/checkout@v3
+
+    - name: Configurando Python
+      uses: actions/setup-python@v4
+      with:
+        python-file: '3.10'
+
+    - name: Instalando Librerías Financieras
+      run: |
+        python -m pip install --upgrade pip
+        pip install yfinance
+
+    - name: Ejecutando Escáner Inteligente
+      run: python app.py
+
+    - name: Guardando Datos Reales en el Radar
+      run: |
+        git config --global user.name "GitHub Action"
+        git config --global user.email "action@github.com"
+        git add datos_radar.json
+        git commit -m "📡 Actualización automática del Radar con datos en vivo" || exit 0
+        git push
