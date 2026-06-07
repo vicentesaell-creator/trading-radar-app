@@ -1,8 +1,14 @@
 from flask import Flask, jsonify, render_template_string
-import subprocess
+import sys
 import os
 
 app = Flask(__name__)
+
+# Asegurar que Python pueda encontrar la carpeta de los escáneres para importar las funciones limpias
+ruta_raiz = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
+carpeta_scanner = os.path.join(ruta_raiz, '1_scanner', '1_scanner')
+if carpeta_scanner not in sys.path:
+    sys.path.append(carpeta_scanner)
 
 HTML_LAYOUT = """
 <!DOCTYPE html>
@@ -25,27 +31,25 @@ HTML_LAYOUT = """
         <h1 style="font-size: 1.5rem; font-weight: bold; text-align: center; color: #60a5fa; margin-top: 0; margin-bottom: 0.5rem;">⚡ MI-ALPHA-RADAR ⚡</h1>
         <p style="font-size: 0.75rem; color: #9ca3af; text-align: center; margin-bottom: 1.5rem; margin-top: 0;">Filtro de Diamantes en Bruto ($5 - $40)</p>
         
-        <button onclick="ejecutarEscaner('brain_scanner.py.')" class="btn-scan">📊 Escanear S&P 500</button>
-        <button onclick="ejecutarEscaner('nasdaq_scanner.py')" class="btn-scan">💻 Escanear NASDAQ 100</button>
-        <button onclick="ejecutarEscaner('dow_scanner.py')" class="btn-scan">🏭 Escanear DOW JONES</button>
+        <button onclick="ejecutarEscaner('sp500')" class="btn-scan">📊 Escanear S&P 500</button>
+        <button onclick="ejecutarEscaner('nasdaq')" class="btn-scan">💻 Escanear NASDAQ 100</button>
+        <button onclick="ejecutarEscaner('dow')" class="btn-scan">🏭 Escanear DOW JONES</button>
 
         <div class="console-box" id="consola">> Servidor listo. Esperando comando...</div>
     </div>
 
     <script>
-        function ejecutarEscaner(nombreArchivo) {
+        function ejecutarEscaner(tipoMercado) {
             var consola = document.getElementById('consola');
-            consola.innerHTML = "> Conectando con el puente...\\n> Iniciando escaneo...\\n> Procesando mercado ($5 - $40)...";
+            consola.innerHTML = "> Conectando con el puente...\\n> Iniciando escaneo institucional...\\n> Filtrando activos en vivo ($5 - $40)...";
             
-            var rutaDestino = '/scan?script=' + nombreArchivo;
-            
-            fetch(rutaDestino)
+            fetch('/scan?mercado=' + tipoMercado)
                 .then(function(res) { return res.json(); })
                 .then(function(data) {
                     if(data.status === "success") {
                         consola.innerHTML = data.output;
                     } else {
-                        consola.innerHTML = "> ERROR EN EL SERVIDOR:\\n\\n" + data.error;
+                        consola.innerHTML = "> ERROR EN EL RADAR:\\n\\n" + data.error;
                     }
                 })
                 .catch(function(err) {
@@ -64,41 +68,34 @@ def home():
 @app.route('/scan', methods=['GET'])
 def scan():
     from flask import request
-    script_name = request.args.get('script')
+    import io
+    from contextlib import redirect_stdout
     
-    if not script_name:
-        return jsonify({"status": "error", "error": "No se especificó el nombre del archivo."})
-        
-    # CORRECCIÓN DE RUTA ABSOLUTA: Forzamos ir a la raíz del proyecto para evitar que busque dentro de 2_bridge
-    # Subimos un nivel en las carpetas para encontrar el directorio 1_scanner real
-    ruta_raiz = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
-    script_path = os.path.join(ruta_raiz, '1_scanner', '1_scanner', script_name)
+    mercado = request.args.get('mercado')
     
-    if not os.path.exists(script_path):
-        return jsonify({
-            "status": "error", 
-            "error": "No existe el archivo en la ruta del servidor: " + script_path
-        })
-        
     try:
-        resultado = subprocess.run(
-            ['python', script_path], 
-            capture_output=True, 
-            text=True, 
-            check=True
-        )
+        # Capturar de manera directa e interna lo que imprimen tus escáneres sin usar subprocess externos
+        f = io.StringIO()
+        with redirect_stdout(f):
+            if mercado == 'dow':
+                from dow_scanner import ejecutar_escaner_dow
+                ejecutar_escaner_dow()
+            elif mercado == 'nasdaq':
+                from nasdaq_scanner import ejecutar_escaner_nasdaq
+                ejecutar_escaner_nasdaq()
+            elif mercado == 'sp500':
+                from brain_scanner import ejecutar_escaner_sp500
+                ejecutar_escaner_sp500()
+            else:
+                return jsonify({"status": "error", "error": "Mercado no identificado."})
+                
+        output_data = f.getvalue()
         return jsonify({
             "status": "success", 
-            "output": resultado.stdout if resultado.stdout else "El escáner corrió pero no arrojó texto."
-        })
-    except subprocess.CalledProcessError as e:
-        error_detectado = e.stderr if e.stderr else e.stdout
-        return jsonify({
-            "status": "error", 
-            "error": "Error interno al ejecutar el script:\\n" + error_detectado
+            "output": output_data if output_data else "El escáner terminó pero no generó texto."
         })
     except Exception as e:
-        return jsonify({"status": "error", "error": str(e)})
+        return jsonify({"status": "error", "error": f"Error al leer las listas locales: {str(e)}"})
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
