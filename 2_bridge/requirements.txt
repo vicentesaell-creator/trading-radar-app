@@ -2,3 +2,4 @@ Flask
 pandas
 yfinance
 requests
+gunicorn
