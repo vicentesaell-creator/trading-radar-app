@@ -1,8 +1,7 @@
 from flask import Flask, jsonify, render_template
 import os
 
-app = Flask(__name__, template_folder='.')
-
+app = Flask(__name__, template_folder='2_bridge/templates')
 @app.route('/')
 def home():
     """Ruta principal que cargará la interfaz visual con los botones."""
