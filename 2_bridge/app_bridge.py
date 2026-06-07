@@ -25,7 +25,7 @@ HTML_LAYOUT = """
         <h1 style="font-size: 1.5rem; font-weight: bold; text-align: center; color: #60a5fa; margin-top: 0; margin-bottom: 0.5rem;">⚡ MI-ALPHA-RADAR ⚡</h1>
         <p style="font-size: 0.75rem; color: #9ca3af; text-align: center; margin-bottom: 1.5rem; margin-top: 0;">Filtro de Diamantes en Bruto ($5 - $40)</p>
         
-        <button onclick="ejecutarEscaner('brain_scanner.py')" class="btn-scan">📊 Escanear S&P 500</button>
+        <button onclick="ejecutarEscaner('brain_scanner.py.')" class="btn-scan">📊 Escanear S&P 500</button>
         <button onclick="ejecutarEscaner('nasdaq_scanner.py')" class="btn-scan">💻 Escanear NASDAQ 100</button>
         <button onclick="ejecutarEscaner('dow_scanner.py')" class="btn-scan">🏭 Escanear DOW JONES</button>
 
@@ -33,21 +33,24 @@ HTML_LAYOUT = """
     </div>
 
     <script>
-        function ejecutarEscaner(archivoScript) {
-            const consola = document.getElementById('consola');
+        function ejecutarEscaner(nombreArchivo) {
+            var consola = document.getElementById('consola');
             consola.innerHTML = "> Conectando con el puente...\\n> Iniciando escaneo...\\n> Procesando mercado ($5 - $40)...";
             
-            fetch('/scan?script=' + archivoScript)
+            // Usamos concatenación simple para evitar que Render rompa el texto
+            var rutaDestino = '/scan?script=' + nombreArchivo;
+            
+            fetch(rutaDestino)
                 .then(function(res) { return res.json(); })
                 .then(function(data) {
                     if(data.status === "success") {
                         consola.innerHTML = data.output;
                     } else {
-                        consola.innerHTML = "> ERROR EN EL ESCÁNER:\\n\\n" + data.error;
+                        consola.innerHTML = "> ERROR EN EL SERVIDOR:\\n\\n" + data.error;
                     }
                 })
                 .catch(function(err) {
-                    consola.innerHTML = "> Error de conexión con Render: " + err;
+                    consola.innerHTML = "> Error de red: " + err;
                 });
         }
     </script>
@@ -64,13 +67,16 @@ def scan():
     from flask import request
     script_name = request.args.get('script')
     
-    # Ruta exacta hacia la carpeta interna de tus escáneres
+    if not script_name:
+        return jsonify({"status": "error", "error": "No se especificó el nombre del archivo."})
+        
+    # Construir ruta directa hacia tus escáneres
     script_path = os.path.join(os.getcwd(), '1_scanner', '1_scanner', script_name)
     
     if not os.path.exists(script_path):
         return jsonify({
             "status": "error", 
-            "error": "No se encontró el archivo en la ruta: " + script_path
+            "error": "No existe el archivo en la ruta del servidor: " + script_path
         })
         
     try:
@@ -82,13 +88,13 @@ def scan():
         )
         return jsonify({
             "status": "success", 
-            "output": resultado.stdout if resultado.stdout else "El escáner corrió pero no arrojó texto en consola."
+            "output": resultado.stdout if resultado.stdout else "El escáner corrió pero no arrojó texto."
         })
     except subprocess.CalledProcessError as e:
-        error_msg = e.stderr if e.stderr else e.stdout
+        error_detectado = e.stderr if e.stderr else e.stdout
         return jsonify({
             "status": "error", 
-            "error": "Error de ejecución del script:\\n" + error_msg
+            "error": "Error interno al ejecutar el script:\\n" + error_detectado
         })
     except Exception as e:
         return jsonify({"status": "error", "error": str(e)})
