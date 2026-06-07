@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -46,15 +44,12 @@
             max-width: 600px;
             margin: 0 auto;
         }
-        
-        /* 📱 ESTILO DE LAS PANTALLAS (PANELES) */
         .page-content {
-            display: none; /* Escondidas por defecto */
+            display: none;
         }
         .page-content.active {
-            display: block; /* Solo se muestra la pantalla activa */
+            display: block;
         }
-        
         .card {
             background: linear-gradient(135deg, #14171c 0%, #1a1f26 100%);
             border: 1px solid #1f242d;
@@ -72,8 +67,6 @@
             font-size: 0.9rem;
             line-height: 1.4;
         }
-
-        /* Botón de Escaneo Provisional */
         .btn-scan {
             background-color: #00e676;
             color: #0d0f12;
@@ -86,8 +79,6 @@
             cursor: pointer;
             margin-top: 10px;
         }
-        
-        /* 📱 BARRA DE BOTONES INFERIOR FIJA (TU PLANO) */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -141,8 +132,7 @@
                 <p>Presiona el botón para ejecutar el escáner del mercado real ($5 a $30) y calcular tus zonas operativas automáticas.</p>
                 <button class="btn-scan">Ejecutar Escáner ⚡</button>
             </div>
-            <div id="radar-results">
-                </div>
+            <div id="radar-results"></div>
         </div>
 
         <div id="page-estrategias" class="page-content">
@@ -190,30 +180,23 @@
     </nav>
 
     <script>
-   function switchPage(pageId, element) {
-            // 1. Esconder todas las pantallas
+        function switchPage(pageId, element) {
             const pages = document.querySelectorAll('.page-content');
             pages.forEach(page => page.classList.remove('active'));
             
-            // 2. Apagar el color verde de todos los botones
             const buttons = document.querySelectorAll('.nav-item');
             buttons.forEach(btn => btn.classList.remove('active'));
             
-            // 3. Mostrar la pantalla elegida
             document.getElementById('page-' + pageId).classList.add('active');
-            
-            // 4. Encender en verde el botón que tocaste
             element.classList.add('active');
         }
 
-        // 📡 ACTIVAR EL BOTÓN DE ESCANEAR MERCADO REAL
         document.addEventListener('DOMContentLoaded', () => {
             const btnScan = document.querySelector('.btn-scan');
             if (btnScan) {
                 btnScan.addEventListener('click', function() {
                     const resultsContainer = document.getElementById('radar-results');
                     
-                    // 1. Mostrar mensaje de carga institucional
                     resultsContainer.innerHTML = `
                         <div class="card" style="text-align: center; border-color: #00e676; margin-top: 15px;">
                             <p style="color: #00e676; font-weight: bold; font-size: 1.1rem;">📡 Escaneando NYSE/NASDAQ...</p>
@@ -221,7 +204,6 @@
                         </div>
                     `;
 
-                    // 2. Simulación de carga del Radar
                     setTimeout(() => {
                         resultsContainer.innerHTML = `
                             <div class="card" style="border-left: 4px solid #00e676; padding: 15px; margin-top: 15px; background: #14171c;">
@@ -242,6 +224,7 @@
                 });
             }
         });
+    </script>
 
 </body>
 </html>
