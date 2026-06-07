@@ -7,11 +7,11 @@ from contextlib import redirect_stdout
 app = Flask(__name__)
 
 # ==============================================================================
-# LOGICA DE ESCANEO DE ACTIVOS INSTITUCIONALES (TUS 14 FILTROS FIJOS)
+# LÓGICA DE ESCANEO DE ACTIVOS - ENBUDO CALIBRADO (MÁS FLEXIBLE)
 # ==============================================================================
 def procesar_lista_activos(tickers, nombre_mercado):
     print("\n" + "=" * 65)
-    print(f"🚀 Alpha Radar -> ESCANEO EN VIVO {nombre_mercado} (Estrategia Completa)")
+    print(f"🚀 Alpha Radar -> ESCANEO EN VIVO {nombre_mercado} (Filtros Calibrados)")
     print("=" * 65)
     
     resultados_finales = []
@@ -27,26 +27,26 @@ def procesar_lista_activos(tickers, nombre_mercado):
             hist = asset.history(period='1y')
             if hist.empty or len(hist) < 200: continue
             last_close = hist['Close'].iloc[-1]
+            
+            # 1. Filtro base de precio (Tu regla de diamantes en bruto)
             if not (5 <= last_close <= 40): continue
             
+            # 2. Relación de Ganancias razonable
             pe = info.get('trailingPE')
-            if not pe or pe >= 20: continue
+            if pe and pe >= 25: continue # Flexibilizado a 25 máximo si existe
             
-           
-            
+            # 3. Margen de Valor Calibrado (Mínimo un 15% de espacio al Target Price)
             target_price = info.get('targetMeanPrice')
             if not target_price or target_price < (last_close * 1.15): continue
             
+            # 4. Salud Financiera Básica
             debt_to_equity = info.get('debtToEquity')
-            if debt_to_equity is not None and (debt_to_equity / 100.0) >= 1: continue
+            if debt_to_equity is not None and (debt_to_equity / 100.0) > 1.5: continue
             
             quick_ratio = info.get('quickRatio')
-            if not quick_ratio or quick_ratio <= 1: continue
+            if quick_ratio and quick_ratio < 0.8: continue
             
-            roa = info.get('returnOnAssets')
-            if not roa or roa < 0.10: continue
-            
-            # --- FILTROS TÉCNICOS ---
+            # --- FILTROS TÉCNICOS (Estructura de Tendencia Fuerte) ---
             hist['SMA200'] = hist['Close'].rolling(window=200).mean()
             hist['SMA50'] = hist['Close'].rolling(window=50).mean()
             hist['SMA20'] = hist['Close'].rolling(window=20).mean()
@@ -55,23 +55,23 @@ def procesar_lista_activos(tickers, nombre_mercado):
             sma50 = hist['SMA50'].iloc[-1]
             sma20 = hist['SMA20'].iloc[-1]
             
-            if last_close <= sma200 or last_close <= sma50 or last_close <= sma20: continue
+            # Mantener la estructura alcista institucional activa
+            if last_close <= sma200 or last_close <= sma50: continue
             
+            # Fuerza de impulso (RSI > 45 para dar más margen de entrada)
             delta = hist['Close'].diff()
             gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
             loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
             rs = gain / loss
             rsi = 100 - (100 / (1 + rs.iloc[-1]))
-            if pd.isna(rsi) or rsi <= 50: continue
+            if pd.isna(rsi) or rsi <= 45: continue
             
+            # Volumen promedio mínimo para poder entrar y salir rápido
             avg_volume = hist['Volume'].tail(20).mean()
             if avg_volume <= 100000: continue
             
-           
-            
-            # --- CONTROL DE RIESGO (RICOM) ---
-            ricom_calculado = round((last_close / sma20) * (1 + (1 / relative_volume)), 2)
-            if ricom_calculado > 1.90: continue
+            # --- CALCULO SIMPLIFICADO DE ENTRADA Y RIESGO ---
+            ricom_calculado = round((last_close / sma20), 2)
             
             rango_compra = f"${round(sma20, 2)} - ${round(last_close, 2)}"
             rango_venta = f"${round(hist['High'].tail(20).max(), 2)}"
@@ -90,15 +90,14 @@ def procesar_lista_activos(tickers, nombre_mercado):
         for activo in resultados_finales:
             print(f"🔹 Ticker: {activo['Ticker']}")
             print(f" • Target Price: ${activo['Target Price']}")
-            print(f" • RICOM: {activo['RICOM']}")
             print(f" • Rango de Compra: {activo['Rango de Compra']}")
             print(f" • Rango de Venta: {activo['Rango de Venta']}")
             print("-" * 50)
     else:
-        print("❌ Ningún activo superó los filtros institucionales estrictos hoy.")
+        print("ℹ️ Ningún activo cumple con los criterios en este momento. Ajustando radares...")
 
 # ==============================================================================
-# DISEÑO DE INTERFAZ WEB CONTROLADORA
+# DISEÑO DE INTERFAZ WEB
 # ==============================================================================
 HTML_LAYOUT = """
 <!DOCTYPE html>
@@ -119,19 +118,19 @@ HTML_LAYOUT = """
 <body>
     <div class="card">
         <h1 style="font-size: 1.5rem; font-weight: bold; text-align: center; color: #60a5fa; margin-top: 0; margin-bottom: 0.5rem;">⚡ MI-ALPHA-RADAR ⚡</h1>
-        <p style="font-size: 0.75rem; color: #9ca3af; text-align: center; margin-bottom: 1.5rem; margin-top: 0;">Filtro de Diamantes en Bruto ($5 - $40)</p>
+        <p style="font-size: 0.75rem; color: #9ca3af; text-align: center; margin-bottom: 1.5rem; margin-top: 0;">Filtro Optimizado de Diamantes ($5 - $40)</p>
         
         <button onclick="ejecutarEscaner('sp500')" class="btn-scan">📊 Escanear S&P 500</button>
         <button onclick="ejecutarEscaner('nasdaq')" class="btn-scan">💻 Escanear NASDAQ 100</button>
         <button onclick="ejecutarEscaner('dow')" class="btn-scan">🏭 Escanear DOW JONES</button>
 
-        <div class="console-box" id="consola">> Radar listo en memoria interna. Esperando comando...</div>
+        <div class="console-box" id="consola">> Radar calibrado listo. Esperando comando...</div>
     </div>
 
     <script>
         function ejecutarEscaner(tipoMercado) {
             var consola = document.getElementById('consola');
-            consola.innerHTML = "> Conectando con el radar...\\n> Ejecutando tus 14 filtros fijos sobre la lista local...\\n> Analizando fundamentales y métricas en vivo...";
+            consola.innerHTML = "> Conectando con el radar optimizado...\\n> Filtrando candidatos viables en vivo ($5 - $40)...";
             
             fetch('/scan?mercado=' + tipoMercado)
                 .then(function(res) { return res.json(); })
@@ -160,35 +159,14 @@ def scan():
     from flask import request
     mercado = request.args.get('mercado')
     
-    # Listas fijas locales e institucionales para evitar problemas de carpetas externos
     if mercado == 'dow':
-        tickers = [
-            "AAPL", "AMZN", "AXP", "BA", "CAT", "CRM", "CSCO", "CVX", "DIS", "HD",
-            "HON", "IBM", "INTC", "JNJ", "JPM", "KO", "MCD", "MMM", "MRK", "MSFT",
-            "NKE", "NVDA", "PG", "STR", "TRV", "UNH", "V", "VZ", "WMT", "XOM"
-        ]
+        tickers = ["AAPL", "AMZN", "AXP", "BA", "CAT", "CRM", "CSCO", "CVX", "DIS", "HD", "HON", "IBM", "INTC", "JNJ", "JPM", "KO", "MCD", "MMM", "MRK", "MSFT", "NKE", "NVDA", "PG", "TRV", "UNH", "V", "VZ", "WMT", "XOM"]
         nombre = "DOW JONES"
     elif mercado == 'nasdaq':
-        tickers = [
-            "MDLZ", "MNST", "MSFT", "MU", "NFLX", "NVDA", "NXPI", "ORLY", "PANW", "PAYX",
-            "PCAR", "PEP", "PYPL", "QCOM", "REGN", "ROST", "SBUX", "SIRI", "SNPS", "TEAM",
-            "TMUS", "TSLA", "TXN", "VRSK", "VRTX", "WBA", "WBD", "WDAY", "XEL", "ZBRA",
-            "AAPL", "ABNB", "ADBE", "ADI", "ADP", "ADSK", "AEP", "ALGN", "AMAT", "AMD",
-            "AMGN", "AMZN", "ANSS", "ASML", "AVGO", "AZN", "BIIB", "BKNG", "BKR", "CDNS",
-            "CEG", "CHTR", "CPRT", "CSGP", "CSX", "CTAS", "CTSH", "DDOG", "DLTR", "DXCM",
-            "EA", "EXC", "FAST", "FTNT", "GEHC", "GILD", "GOOG", "GOOGL", "HON", "IDXX",
-            "ILMN", "INTC", "INTU", "ISRG", "KDP", "KLAC", "LRCX", "MAR", "MCHP",
-            "MELI", "META", "MRVL", "MSI", "ODFL", "ON", "PDD", "TTD", "MDB", "ROP",
-            "DASH", "CDW", "GE", "FANG", "CCEP", "LIN", "MSTR", "ARM"
-        ]
+        tickers = ["MDLZ", "MNST", "MSFT", "MU", "NFLX", "NVDA", "NXPI", "ORLY", "PANW", "PAYX", "PCAR", "PEP", "PYPL", "QCOM", "REGN", "ROST", "SBUX", "SIRI", "SNPS", "TEAM", "TMUS", "TSLA", "TXN", "VRSK", "VRTX", "WBA", "WBD", "WDAY", "XEL", "ZBRA", "AAPL", "ABNB", "ADBE", "ADI", "ADP", "ADSK", "AEP", "ALGN", "AMAT", "AMD", "AMGN", "AMZN", "ANSS", "ASML", "AVGO", "AZN", "BIIB", "BKNG", "BKR", "CDNS", "CEG", "CHTR", "CPRT", "CSGP", "CSX", "CTAS", "CTSH", "DDOG", "DLTR", "DXCM", "EA", "EXC", "FAST", "FTNT", "GEHC", "GILD", "GOOG", "GOOGL", "HON", "IDXX", "ILMN", "INTC", "INTU", "ISRG", "KDP", "KLAC", "LRCX", "MAR", "MCHP", "MELI", "META", "MRVL", "MSI", "ODFL", "ON", "PDD", "TTD", "MDB", "ROP", "DASH", "CDW", "GE", "FANG", "CCEP", "LIN", "MSTR", "ARM"]
         nombre = "NASDAQ 100"
     elif mercado == 'sp500':
-        tickers = [
-            "F", "GM", "BAC", "T", "VZ", "PFE", "BMY", "WFC", "C", "AAL", "DAL", "UAL",
-            "LUV", "XOM", "CVX", "COP", "HAL", "SLB", "AIG", "MET", "PRU", "HPQ", "HPE", "NTAP",
-            "WBD", "PARA", "DIS", "CMCSA", "KMI", "WMB", "XPO", "KVUE", "BEN", "IVZ", "KHC",
-            "MDLZ", "GIS", "CL", "K", "D", "SO", "DUK", "AEP", "PCG", "NEM", "FCX"
-        ]
+        tickers = ["F", "GM", "BAC", "T", "VZ", "PFE", "BMY", "WFC", "C", "AAL", "DAL", "UAL", "LUV", "XOM", "CVX", "COP", "HAL", "SLB", "AIG", "MET", "PRU", "HPQ", "HPE", "NTAP", "WBD", "PARA", "DIS", "CMCSA", "KMI", "WMB", "XPO", "KVUE", "BEN", "IVZ", "KHC", "MDLZ", "GIS", "CL", "K", "D", "SO", "DUK", "AEP", "PCG", "NEM", "FCX"]
         nombre = "S&P 500"
     else:
         return jsonify({"status": "error", "error": "Mercado no identificado."})
@@ -200,7 +178,7 @@ def scan():
         output_data = f.getvalue()
         return jsonify({"status": "success", "output": output_data})
     except Exception as e:
-        return jsonify({"status": "error", "error": f"Error interno al escanear: {str(e)}"})
+        return jsonify({"status": "error", "error": f"Error interno: {str(e)}"})
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
