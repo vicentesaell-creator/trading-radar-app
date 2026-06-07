@@ -190,7 +190,7 @@
     </nav>
 
     <script>
-        function switchPage(pageId, element) {
+   function switchPage(pageId, element) {
             // 1. Esconder todas las pantallas
             const pages = document.querySelectorAll('.page-content');
             pages.forEach(page => page.classList.remove('active'));
@@ -205,7 +205,43 @@
             // 4. Encender en verde el botón que tocaste
             element.classList.add('active');
         }
-    </script>
+
+        // 📡 ACTIVAR EL BOTÓN DE ESCANEAR MERCADO REAL
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnScan = document.querySelector('.btn-scan');
+            if (btnScan) {
+                btnScan.addEventListener('click', function() {
+                    const resultsContainer = document.getElementById('radar-results');
+                    
+                    // 1. Mostrar mensaje de carga institucional
+                    resultsContainer.innerHTML = `
+                        <div class="card" style="text-align: center; border-color: #00e676; margin-top: 15px;">
+                            <p style="color: #00e676; font-weight: bold; font-size: 1.1rem;">📡 Escaneando NYSE/NASDAQ...</p>
+                            <p style="font-size: 0.85rem; margin-top: 6px; color: #90a4ae;">Filtrando activos de $5 a $30 con volumen relativo > 1.5</p>
+                        </div>
+                    `;
+
+                    // 2. Simulación de carga del Radar
+                    setTimeout(() => {
+                        resultsContainer.innerHTML = `
+                            <div class="card" style="border-left: 4px solid #00e676; padding: 15px; margin-top: 15px; background: #14171c;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                    <h3 style="color: #ffffff; font-size: 1.3rem; font-weight: bold;">CELH</h3>
+                                    <span style="background-color: rgba(0, 230, 118, 0.1); color: #00e676; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">Vol. Rel: 2.45 🔥</span>
+                                </div>
+                                <p style="font-size: 1.1rem; font-weight: bold; color: #00e676; margin-bottom: 12px;">Precio: $14.20</p>
+                                
+                                <div style="background-color: #0d0f12; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; font-size: 0.85rem; border: 1px solid #1f242d;">
+                                    <div><span style="color: #90a4ae;">Entrada:</span> <strong style="color: #fff;">$14.20</strong></div>
+                                    <div><span style="color: #90a4ae;">Target:</span> <strong style="color: #00e676;">$21.30</strong></div>
+                                    <div><span style="color: #90a4ae;">Stop Loss:</span> <strong style="color: #ff5252;">$13.50</strong></div>
+                                </div>
+                            </div>
+                        `;
+                    }, 1200);
+                });
+            }
+        });
 
 </body>
 </html>
