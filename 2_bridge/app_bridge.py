@@ -1,84 +1,130 @@
-128
-129
-130
-131
-132
-133
-134
-135
-136
-137
-138
-139
-140
-141
-142
-143
-144
-145
-146
-147
-148
-149
-150
-151
-152
-153
-154
-155
-156
-157
-158
-159
-160
-161
-162
-163
-164
-165
-166
-167
-168
-169
-170
-171
-172
-173
-174
-175
-176
-177
-178
-179
-180
-181
-182
-183
-184
-185
-186
-187
-188
-189
-190
-191
-192
-193
-194
-195
-196
-197
-198
-199
-200
-201
-202
-203
-204
-205
-206
-207
+from flask import Flask, jsonify, render_template_string
+import pandas as pd
+import yfinance as yf
+import io
+from contextlib import redirect_stdout
+
+app = Flask(__name__)
+
+# ==============================================================================
+# LOGICA DE ESCANEO DE ACTIVOS INSTITUCIONALES (TUS 14 FILTROS FIJOS)
+# ==============================================================================
+def procesar_lista_activos(tickers, nombre_mercado):
     print("\n" + "=" * 65)
+    print(f"🚀 Alpha Radar -> ESCANEO EN VIVO {nombre_mercado} (Estrategia Completa)")
+    print("=" * 65)
+    
+    resultados_finales = []
+    
+    for ticker in tickers:
+        try:
+            asset = yf.Ticker(ticker)
+            info = asset.info
+            
+            # --- FILTROS FUNDAMENTALES ---
+            if info.get('quoteType') != 'EQUITY': continue
+            
+            hist = asset.history(period='1y')
+            if hist.empty or len(hist) < 200: continue
+            last_close = hist['Close'].iloc[-1]
+            if not (5 <= last_close <= 40): continue
+            
+            pe = info.get('trailingPE')
+            if not pe or pe >= 20: continue
+            
+           
+            
+            target_price = info.get('targetMeanPrice')
+            if not target_price or target_price < (last_close * 1.15): continue
+            
+            debt_to_equity = info.get('debtToEquity')
+            if debt_to_equity is not None and (debt_to_equity / 100.0) >= 1: continue
+            
+            quick_ratio = info.get('quickRatio')
+            if not quick_ratio or quick_ratio <= 1: continue
+            
+            roa = info.get('returnOnAssets')
+            if not roa or roa < 0.10: continue
+            
+            # --- FILTROS TÉCNICOS ---
+            hist['SMA200'] = hist['Close'].rolling(window=200).mean()
+            hist['SMA50'] = hist['Close'].rolling(window=50).mean()
+            hist['SMA20'] = hist['Close'].rolling(window=20).mean()
+            
+            sma200 = hist['SMA200'].iloc[-1]
+            sma50 = hist['SMA50'].iloc[-1]
+            sma20 = hist['SMA20'].iloc[-1]
+            
+            if last_close <= sma200 or last_close <= sma50 or last_close <= sma20: continue
+            
+            delta = hist['Close'].diff()
+            gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+            loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+            rs = gain / loss
+            rsi = 100 - (100 / (1 + rs.iloc[-1]))
+            if pd.isna(rsi) or rsi <= 50: continue
+            
+            avg_volume = hist['Volume'].tail(20).mean()
+            if avg_volume <= 100000: continue
+            
+           
+            
+            # --- CONTROL DE RIESGO (RICOM) ---
+            ricom_calculado = round((last_close / sma20) * (1 + (1 / relative_volume)), 2)
+            if ricom_calculado > 1.90: continue
+            
+            rango_compra = f"${round(sma20, 2)} - ${round(last_close, 2)}"
+            rango_venta = f"${round(hist['High'].tail(20).max(), 2)}"
+            
+            resultados_finales.append({
+                "Ticker": ticker,
+                "Target Price": round(target_price, 2),
+                "RICOM": ricom_calculado,
+                "Rango de Compra": rango_compra,
+                "Rango de Venta": rango_venta
+            })
+        except Exception:
+            continue
+            
+    if resultados_finales:
+        for activo in resultados_finales:
+            print(f"🔹 Ticker: {activo['Ticker']}")
+            print(f" • Target Price: ${activo['Target Price']}")
+            print(f" • RICOM: {activo['RICOM']}")
+            print(f" • Rango de Compra: {activo['Rango de Compra']}")
+            print(f" • Rango de Venta: {activo['Rango de Venta']}")
+            print("-" * 50)
+    else:
+        print("❌ Ningún activo superó los filtros institucionales estrictos hoy.")
+
+# ==============================================================================
+# DISEÑO DE INTERFAZ WEB CONTROLADORA
+# ==============================================================================
+HTML_LAYOUT = """
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alpha Radar Control</title>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 1rem; box-sizing: border-box; }
+        .card { width: 100%; max-width: 500px; background-color: #111827; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid #1f2937; }
+        .btn-scan { width: 100%; padding: 1rem; background-color: #1e293b; border: 2px solid #3b82f6; border-radius: 0.75rem; font-weight: bold; color: white; cursor: pointer; text-align: left; margin-bottom: 1rem; transition: all 0.2s; }
+        .btn-scan:hover { background-color: #1e3a8a; }
+        .btn-scan:active { transform: scale(0.98); }
+        .console-box { background-color: #000000; border: 1px solid #1e293b; font-family: monospace; white-space: pre-wrap; padding: 1rem; border-radius: 0.75rem; min-height: 200px; max-height: 400px; overflow-y: auto; font-size: 0.8rem; color: #34d399; margin-top: 1rem; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1 style="font-size: 1.5rem; font-weight: bold; text-align: center; color: #60a5fa; margin-top: 0; margin-bottom: 0.5rem;">⚡ MI-ALPHA-RADAR ⚡</h1>
+        <p style="font-size: 0.75rem; color: #9ca3af; text-align: center; margin-bottom: 1.5rem; margin-top: 0;">Filtro de Diamantes en Bruto ($5 - $40)</p>
+        
+        <button onclick="ejecutarEscaner('sp500')" class="btn-scan">📊 Escanear S&P 500</button>
+        <button onclick="ejecutarEscaner('nasdaq')" class="btn-scan">💻 Escanear NASDAQ 100</button>
+        <button onclick="ejecutarEscaner('dow')" class="btn-scan">🏭 Escanear DOW JONES</button>
+
         <div class="console-box" id="consola">> Radar listo en memoria interna. Esperando comando...</div>
     </div>
 
