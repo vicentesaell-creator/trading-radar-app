@@ -37,7 +37,6 @@ HTML_LAYOUT = """
             var consola = document.getElementById('consola');
             consola.innerHTML = "> Conectando con el puente...\\n> Iniciando escaneo...\\n> Procesando mercado ($5 - $40)...";
             
-            // Usamos concatenación simple para evitar que Render rompa el texto
             var rutaDestino = '/scan?script=' + nombreArchivo;
             
             fetch(rutaDestino)
@@ -70,8 +69,10 @@ def scan():
     if not script_name:
         return jsonify({"status": "error", "error": "No se especificó el nombre del archivo."})
         
-    # Construir ruta directa hacia tus escáneres
-    script_path = os.path.join(os.getcwd(), '1_scanner', '1_scanner', script_name)
+    # CORRECCIÓN DE RUTA ABSOLUTA: Forzamos ir a la raíz del proyecto para evitar que busque dentro de 2_bridge
+    # Subimos un nivel en las carpetas para encontrar el directorio 1_scanner real
+    ruta_raiz = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
+    script_path = os.path.join(ruta_raiz, '1_scanner', '1_scanner', script_name)
     
     if not os.path.exists(script_path):
         return jsonify({
