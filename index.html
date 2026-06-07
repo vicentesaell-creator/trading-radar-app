@@ -129,8 +129,8 @@
         <div id="page-radar" class="page-content active">
             <div class="card">
                 <h2>Buscador de Diamantes en Bruto</h2>
-                <p>Presiona el botón para ejecutar el escáner del mercado real ($5 a $30) y calcular tus zonas operativas automáticas.</p>
-                <button class="btn-scan">Ejecutar Escáner ⚡</button>
+                <p>Presiona el botón para consultar la base de datos del escáner real en vivo ($5 a $30) y tus zonas automáticas.</p>
+                <button class="btn-scan" onclick="cargarDatosRadar()">Consultar Radar Real ⚡</button>
             </div>
             <div id="radar-results"></div>
         </div>
@@ -147,7 +147,7 @@
         <div id="page-noticias" class="page-content">
             <div class="card">
                 <h2>Terminal de Noticias e Ingresos</h2>
-                <p>Selecciona una acción del Radar para cargar su gráfica en vivo con tus medias móviles y evaluar el gráfico de salud financiera (Verde / Rojo).</p>
+                <p>Próximamente: Selecciona una acción del Radar para cargar su gráfica en vivo con tus medias móviles y evaluar el gráfico de salud financiera.</p>
             </div>
         </div>
 
@@ -191,39 +191,61 @@
             element.classList.add('active');
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const btnScan = document.querySelector('.btn-scan');
-            if (btnScan) {
-                btnScan.addEventListener('click', function() {
-                    const resultsContainer = document.getElementById('radar-results');
-                    
-                    resultsContainer.innerHTML = `
-                        <div class="card" style="text-align: center; border-color: #00e676; margin-top: 15px;">
-                            <p style="color: #00e676; font-weight: bold; font-size: 1.1rem;">📡 Escaneando NYSE/NASDAQ...</p>
-                            <p style="font-size: 0.85rem; margin-top: 6px; color: #90a4ae;">Filtrando activos de $5 a $30 con volumen relativo > 1.5</p>
-                        </div>
-                    `;
+        // 📡 LECTURA DE DATOS REALES DESDE EL ARCHIVO JSON
+        function cargarDatosRadar() {
+            const resultsContainer = document.getElementById('radar-results');
+            
+            // Mensaje de carga inicial
+            resultsContainer.innerHTML = `
+                <div class="card" style="text-align: center; border-color: #00e676; margin-top: 15px;">
+                    <p style="color: #00e676; font-weight: bold; font-size: 1.1rem;">📡 Leyendo datos del mercado real...</p>
+                </div>
+            `;
 
-                    setTimeout(() => {
+            // Hacemos la consulta al archivo que actualiza tu script de Python
+            fetch('datos_radar.json?v=' + new Date().getTime())
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length === 0) {
                         resultsContainer.innerHTML = `
+                            <div class="card" style="text-align: center; margin-top: 15px;">
+                                <p style="color: #ff5252; font-weight: bold;">No se encontraron activos en el rango de $5 a $30 en este momento.</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    // Limpiamos el contenedor para meter los resultados reales
+                    resultsContainer.innerHTML = '';
+
+                    // Pintamos cada acción que Python capturó
+                    data.forEach(accion => {
+                        resultsContainer.innerHTML += `
                             <div class="card" style="border-left: 4px solid #00e676; padding: 15px; margin-top: 15px; background: #14171c;">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                    <h3 style="color: #ffffff; font-size: 1.3rem; font-weight: bold;">CELH</h3>
-                                    <span style="background-color: rgba(0, 230, 118, 0.1); color: #00e676; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">Vol. Rel: 2.45 🔥</span>
+                                    <h3 style="color: #ffffff; font-size: 1.3rem; font-weight: bold;">${accion.ticker}</h3>
+                                    <span style="background-color: rgba(0, 230, 118, 0.1); color: #00e676; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">Vol. Rel: ${accion.vol_rel} 🔥</span>
                                 </div>
-                                <p style="font-size: 1.1rem; font-weight: bold; color: #00e676; margin-bottom: 12px;">Precio: $14.20</p>
+                                <p style="font-size: 1.1rem; font-weight: bold; color: #00e676; margin-bottom: 12px;">Precio: $${accion.precio}</p>
                                 
                                 <div style="background-color: #0d0f12; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; font-size: 0.85rem; border: 1px solid #1f242d;">
-                                    <div><span style="color: #90a4ae;">Entrada:</span> <strong style="color: #fff;">$14.20</strong></div>
-                                    <div><span style="color: #90a4ae;">Target:</span> <strong style="color: #00e676;">$21.30</strong></div>
-                                    <div><span style="color: #90a4ae;">Stop Loss:</span> <strong style="color: #ff5252;">$13.50</strong></div>
+                                    <div><span style="color: #90a4ae;">Entrada:</span> <strong style="color: #fff;">$${accion.entrada}</strong></div>
+                                    <div><span style="color: #90a4ae;">Target:</span> <strong style="color: #00e676;">$${accion.target}</strong></div>
+                                    <div><span style="color: #90a4ae;">Stop Loss:</span> <strong style="color: #ff5252;">$${accion.stop}</strong></div>
                                 </div>
                             </div>
                         `;
-                    }, 1200);
+                    });
+                })
+                .catch(error => {
+                    console.error("Error cargando el radar:", error);
+                    resultsContainer.innerHTML = `
+                        <div class="card" style="text-align: center; margin-top: 15px;">
+                            <p style="color: #ff5252; font-weight: bold;">Error al conectar con la base de datos.</p>
+                        </div>
+                    `;
                 });
-            }
-        });
+        }
     </script>
 
 </body>
