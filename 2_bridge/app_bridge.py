@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, render_template_string
+import subprocess
 import os
 
 app = Flask(__name__)
@@ -11,45 +12,50 @@ HTML_LAYOUT = """
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alpha Radar Control</title>
-    <script src="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.center.js"></script>
     <style>
         body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; }
+        .btn-scan { background-color: #1e293b; border: 2px solid #3b82f6; transition: all 0.2s; }
+        .btn-scan:hover { background-color: #1e3a8a; }
+        .btn-scan:active { transform: scale(0.98); }
+        .console-box { background-color: #000000; border: 1px solid #1e293b; font-family: monospace; white-space: pre-wrap; }
     </style>
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen p-4">
-    <div class="w-full max-w-md bg-gray-900 rounded-2xl p-6 shadow-2xl border border-gray-800">
-        <h1 class="text-2xl font-bold text-center text-blue-400 mb-2">⚡ MI-ALPHA-RADAR ⚡</h1>
-        <p class="text-xs text-gray-400 text-center mb-6">Filtro de Diamantes en Bruto ($5 - $40)</p>
+<body style="display: flex; flex-direction: col; items-center; justify-content: center; min-height: 100vh; padding: 1rem; box-sizing: border-box;">
+    <div style="width: 100%; max-width: 500px; background-color: #111827; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid #1f2937;">
+        <h1 style="font-size: 1.5rem; font-weight: bold; text-align: center; color: #60a5fa; margin-bottom: 0.5rem;">⚡ MI-ALPHA-RADAR ⚡</h1>
+        <p style="font-size: 0.75rem; color: #9ca3af; text-align: center; margin-bottom: 1.5rem;">Filtro de Diamantes en Bruto ($5 - $40)</p>
         
-        <div class="space-y-4">
-            <button onclick="ejecutarEscaner('sp500')" class="w-full py-4 bg-gray-800 border-2 border-blue-500 hover:bg-blue-900 rounded-xl font-bold text-lg transition-all transform active:scale-95 flex items-center justify-center gap-3">
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <button onclick="ejecutarEscaner('brain_scanner.py')" class="btn-scan" style="width: 100%; padding: 1rem; border-radius: 0.75rem; font-weight: bold; text-align: left; cursor: pointer; color: white;">
                 📊 Escanear S&P 500
             </button>
-            <button onclick="ejecutarEscaner('nasdaq')" class="w-full py-4 bg-gray-800 border-2 border-blue-500 hover:bg-blue-900 rounded-xl font-bold text-lg transition-all transform active:scale-95 flex items-center justify-center gap-3">
+            <button onclick="ejecutarEscaner('nasdaq_scanner.py')" class="btn-scan" style="width: 100%; padding: 1rem; border-radius: 0.75rem; font-weight: bold; text-align: left; cursor: pointer; color: white;">
                 💻 Escanear NASDAQ 100
             </button>
-            <button onclick="ejecutarEscaner('dow')" class="w-full py-4 bg-gray-800 border-2 border-blue-500 hover:bg-blue-900 rounded-xl font-bold text-lg transition-all transform active:scale-95 flex items-center justify-center gap-3">
+            <button onclick="ejecutarEscaner('dow_scanner.py')" class="btn-scan" style="width: 100%; padding: 1rem; border-radius: 0.75rem; font-weight: bold; text-align: left; cursor: pointer; color: white;">
                 🏭 Escanear DOW JONES
             </button>
         </div>
 
-        <div class="mt-6 p-4 bg-black rounded-xl border border-gray-800 min-h-[150px]">
-            <p class="text-xs text-green-400 font-mono" id="consola">> Servidor listo. Esperando comando...</p>
-        </div>
+        <div class="console-box" id="consola" style="margin-top: 1.5rem; padding: 1rem; border-radius: 0.75rem; min-height: 200px; max-height: 400px; overflow-y: auto; font-size: 0.8rem; color: #34d399;">> Servidor listo. Esperando comando...</div>
     </div>
 
     <script>
-        function ejecutarEscaner(indice) {
+        function ejecutarEscaner(archivoScript) {
             const consola = document.getElementById('consola');
-            consola.innerHTML = `> Conectando con el puente...\\n> Iniciando escaneo de ${indice.toUpperCase()}...\\n> Filtrando acciones entre $5 y $40...`;
+            consola.innerHTML = `> Conectando con el puente...\\n> Iniciando escaneo mediante ${archivoScript}...\\n> Esto puede tardar unos segundos mientras yfinance procesa el mercado...`;
             
-            fetch(`/scan/${indice}`)
+            fetch(`/scan?script=${archivoScript}`)
                 .then(res => res.json())
                 .then(data => {
-                    consola.innerHTML = `> Respuesta recibida del servidor:\\n> Status: ${data.status.toUpperCase()}\\n> Mensaje: ${data.message}`;
+                    if(data.status === "success") {
+                        consola.innerHTML = data.output;
+                    } else {
+                        consola.innerHTML = `> ERROR EN EL ESCÁNER:\\n\\n\${data.error}`;
+                    }
                 })
                 .catch(err => {
-                    consola.innerHTML = `> Error en la conexión: \${err}`;
+                    consola.innerHTML = `> Error de conexión con Render: \${err}`;
                 });
         }
     </script>
@@ -62,26 +68,42 @@ def home():
     """Carga la interfaz visual directamente desde la memoria."""
     return render_template_string(HTML_LAYOUT)
 
-@app.route('/scan/sp500', methods=['GET'])
-def scan_sp500():
+@app.route('/scan', methods=['GET'])
+def scan():
+    from flask import request
+    script_name = request.args.get('script')
+    
+    # Definir la ruta exacta donde se encuentran tus escáneres en Render
+    script_path = os.path.join(os.getcwd(), '1_scanner', '1_scanner', script_name)
+    
+    if not os.path.exists(script_path):
+        return jsonify({
+            "status": "error", 
+            "error": f"No se encontró el archivo del escáner en la ruta: {script_path}"
+        })
+        
     try:
-        return jsonify({"status": "success", "message": "Escaneo del S&P 500 ejecutado con éxito"})
+        # Ejecuta el script de python y captura lo que imprima en la consola
+        resultado = subprocess.run(
+            ['python', script_path], 
+            capture_output=True, 
+            text=True, 
+            check=True
+        )
+        return jsonify({
+            "status": "success", 
+            "output": resultado.stdout
+        })
+    except subprocess.CalledProcessError as e:
+        return jsonify({
+            "status": "error", 
+            "error": f"Error al ejecutar el script del escáner:\\nSTDOUT:\\n{e.stdout}\\nSTDERR:\\n{e.stderr}"
+        })
     except Exception as e:
-        return jsonify({"status": "error", "message": str(e)})
-
-@app.route('/scan/nasdaq', methods=['GET'])
-def scan_nasdaq():
-    try:
-        return jsonify({"status": "success", "message": "Escaneo del Nasdaq 100 ejecutado con éxito"})
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)})
-
-@app.route('/scan/dow', methods=['GET'])
-def scan_dow():
-    try:
-        return jsonify({"status": "success", "message": "Escaneo del Dow Jones ejecutado con éxito"})
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)})
+        return jsonify({
+            "status": "error", 
+            "error": str(e)
+        })
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
