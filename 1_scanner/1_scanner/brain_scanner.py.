@@ -1,155 +1,102 @@
-import yfinance as yf
+import os
 import pandas as pd
-import numpy as np
-
-def calcular_rsi(data, period=14):
-    """Calcula el RSI (14) basado en los precios de cierre."""
-    delta = data['Close'].diff()
-    gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
-    loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
-    rs = gain / loss
-    return 100 - (100 / (1 + rs))
-
-def obtener_tickers_sp500():
-    """Descarga de forma automática la lista oficial y actualizada del S&P 500."""
-    try:
-        url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
-        tablas = pd.read_html(url)
-        df = tablas[0]
-        # Extraemos los símbolos de las acciones
-        tickers = df['Symbol'].tolist()
-        # Limpieza de tickers para el formato de yfinance (cambiar puntos por guiones)
-        tickers = [t.replace('.', '-') for t in tickers]
-        return tickers
-    except Exception as e:
-        print("❌ Error al descargar la lista del S&P 500 desde Wikipedia.")
-        return []
+import yfinance as yf
 
 def ejecutar_escaner_sp500():
-    print("🚀 Iniciando Super Escáner: Alpha Radar -> ESCANEO EN VIVO S&P 500...")
+    print("\n" + "=" * 65)
+    print("🚀 Alpha Radar -> ESCANEO EN VIVO S&P 500 (Estrategia Completa)")
+    print("=" * 65)
     
-    tickers_lista = obtener_tickers_sp500()
-    if not tickers_lista:
-        print("Cancelando escaneo por falta de tickers.")
-        return
-        
-    print(f"Analizando un total de {len(tickers_lista)} activos del S&P 500.\n")
+    # Lista de emisoras clave del S&P 500 ideales para este rango medio
+    tickers = [
+        "F", "GM", "BAC", "T", "VZ", "PFE", "BMY", "WFC", "C", "AAL", "DAL", "UAL",
+        "LUV", "XOM", "CVX", "COP", "HAL", "SLB", "AIG", "MET", "PRU", "HPQ", "HPE", "NTAP",
+        "WBD", "PARA", "DIS", "CMCSA", "KMI", "WMB", "XPO", "KVUE", "BEN", "IVZ", "KHC",
+        "MDLZ", "GIS", "CL", "K", "D", "SO", "DUK", "AEP", "PCG", "NEM", "FCX"
+    ]
+    
     resultados_finales = []
-
-    for ticker in tickers_lista:
+    
+    for ticker in tickers:
         try:
             asset = yf.Ticker(ticker)
             info = asset.info
             
-            # --- FILTRO EXCLUSIVO: SOLO ACCIONES ---
-            quote_type = info.get('quoteType', '').upper()
-            if quote_type != 'EQUITY':
-                continue
-
-            # --- FILTRO CLAVE DE PRECIO ($5 - $40) ---
-            current_price = info.get('currentPrice')
-            if current_price is None or current_price < 5.0 or current_price > 40.0:
-                continue
-
-            # --- PARTE 1: FILTROS FUNDAMENTALES ---
-            pe_ratio = info.get('trailingPE')
-            if pe_ratio is None or pe_ratio >= 20:
-                continue
-
-            sales_growth_5y = info.get('revenueGrowth')
-            if sales_growth_5y is None or sales_growth_5y < 0.10:
-                continue
-
-            target_price = info.get('targetMeanPrice')
-            if target_price is None or current_price == 0:
-                continue
+            if info.get('quoteType') != 'EQUITY': continue
             
-            # Margen de Valor: Target Price mínimo 50% por encima del precio actual
-            margen_potencial = (target_price - current_price) / current_price
-            if margen_potencial < 0.50:
-                continue
-
+            hist = asset.history(period='1y')
+            if hist.empty or len(hist) < 200: continue
+            last_close = hist['Close'].iloc[-1]
+            if not (5 <= last_close <= 40): continue
+            
+            pe = info.get('trailingPE')
+            if not pe or pe >= 20: continue
+            
+            rev_growth = info.get('revenueGrowth')
+            if not rev_growth or rev_growth < 0.10: continue
+            
+            target_price = info.get('targetMeanPrice')
+            if not target_price or target_price < (last_close * 1.50): continue
+            
             debt_to_equity = info.get('debtToEquity')
-            if debt_to_equity is None or (debt_to_equity / 100.0) >= 1:
-                continue
-
+            if debt_to_equity is not None and (debt_to_equity / 100.0) >= 1: continue
+            
             quick_ratio = info.get('quickRatio')
-            if quick_ratio is None or quick_ratio <= 1:
-                continue
-
+            if not quick_ratio or quick_ratio <= 1: continue
+            
             roa = info.get('returnOnAssets')
-            if roa is None or roa < 0.10:
-                continue
-
-            # --- PARTE 2: FILTROS TÉCNICOS ---
-            hist = asset.history(period="300d")
-            if len(hist) < 200:
-                continue
-
+            if not roa or roa < 0.10: continue
+            
             hist['SMA200'] = hist['Close'].rolling(window=200).mean()
             hist['SMA50'] = hist['Close'].rolling(window=50).mean()
             hist['SMA20'] = hist['Close'].rolling(window=20).mean()
-            hist['RSI14'] = calcular_rsi(hist)
-
-            last_close = hist['Close'].iloc[-1]
-            last_sma200 = hist['SMA200'].iloc[-1]
-            last_sma50 = hist['SMA50'].iloc[-1]
-            last_sma20 = hist['SMA20'].iloc[-1]
-            last_rsi = hist['RSI14'].iloc[-1]
-
-            # Verificación de Estructuras Alcistas
-            if last_close <= last_sma200 or last_close <= last_sma50 or last_close <= last_sma20:
-                continue
-
-            # Fuerza de Compradores (RSI > 50)
-            if last_rsi is None or np.isnan(last_rsi) or last_rsi <= 50:
-                continue
-
-            # Volumen Promedio y Volumen Relativo
-            avg_volume = info.get('averageVolume')
-            if avg_volume is None or avg_volume <= 100000:
-                continue
-
+            
+            sma200 = hist['SMA200'].iloc[-1]
+            sma50 = hist['SMA50'].iloc[-1]
+            sma20 = hist['SMA20'].iloc[-1]
+            
+            if last_close <= sma200 or last_close <= sma50 or last_close <= sma20: continue
+            
+            delta = hist['Close'].diff()
+            gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+            loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+            rs = gain / loss
+            rsi = 100 - (100 / (1 + rs.iloc[-1]))
+            if pd.isna(rsi) or rsi <= 50: continue
+            
+            avg_volume = hist['Volume'].tail(20).mean()
+            if avg_volume <= 100000: continue
+            
             volume_hoy = hist['Volume'].iloc[-1]
             relative_volume = volume_hoy / avg_volume if avg_volume > 0 else 0
-            if relative_volume <= 1.5:
-                continue
-
-            # --- MÉTRICA ESPECIAL DE CONTROL DE RIESGO ---
-            ricom_calculado = round((last_close / last_sma20) * (1 + (1 / relative_volume)), 2)
-            if ricom_calculado > 1.90:
-                continue
-
-            # --- CÁLCULO DE DATOS ADICIONALES ---
-            rango_compra_min = round(last_sma20, 2)
-            rango_compra_max = round(last_close, 2)
-            proxima_resistencia = round(hist['High'].tail(20).max(), 2)
-
+            if relative_volume <= 1.5: continue
+            
+            ricom_calculado = round((last_close / sma20) * (1 + (1 / relative_volume)), 2)
+            if ricom_calculado > 1.90: continue
+            
+            rango_compra = f"${round(sma20, 2)} - ${round(last_close, 2)}"
+            rango_venta = f"${round(hist['High'].tail(20).max(), 2)}"
+            
             resultados_finales.append({
                 "Ticker": ticker,
                 "Target Price": round(target_price, 2),
                 "RICOM": ricom_calculado,
-                "Rango de Compra": f"${rango_compra_min} - ${rango_compra_max}",
-                "Resistencia": proxima_resistencia
+                "Rango de Compra": rango_compra,
+                "Rango de Venta": rango_venta
             })
-
-        except Exception as e:
+        except Exception:
             continue
-
-    # --- SALIDA DE DATOS EN PANTALLA ---
-    print("\n" + "=" * 65)
+            
     if resultados_finales:
-        print("🎯 ¡ACTIVOS ENCONTRADOS EN EL S&P 500! ($5 - $40) 🎯")
-        print("=" * 65)
         for activo in resultados_finales:
-            print(f"🔹 ACTIVO: {activo['Ticker']}")
-            print(f"  • Target Price (Consenso): ${activo['Target Price']}")
-            print(f"  • Métrica RICOM: {activo['RICOM']}")
-            print(f"  • Rango de Compra Ideal: {activo['Rango de Compra']}")
-            print(f"  • Próxima Posible Resistencia: ${activo['Resistencia']}")
-            print("-" * 65)
+            print(f"🔹 Ticker: {activo['Ticker']}")
+            print(f" • Target Price: ${activo['Target Price']}")
+            print(f" • RICOM: {activo['RICOM']}")
+            print(f" • Rango de Compra: {activo['Rango de Compra']}")
+            print(f" • Rango de Venta: {activo['Rango de Venta']}")
+            print("-" * 50)
     else:
-        print("❌ Ningún activo del S&P 500 superó los filtros estrictos en el rango de $5-$40 hoy.")
+        print("❌ Ningún activo superó los filtros institucionales estrictos hoy.")
 
 if __name__ == "__main__":
     ejecutar_escaner_sp500()
