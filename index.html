@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Alpha Radar Pro</title>
+    <link rel="icon" type="image/png" href="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=32&h=32&fit=crop">
+    <link rel="apple-touch-icon" href="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=180&h=180&fit=crop">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background-color: #0d0f12;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            padding-bottom: 80px; /* Espacio para que los botones de abajo no tapen el contenido */
+        }
+        header {
+            background-color: #14171c;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #1f242d;
+        }
+        header h1 {
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            color: #00e676;
+        }
+        header p {
+            font-size: 0.85rem;
+            color: #90a4ae;
+            margin-top: 5px;
+        }
+        .container {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .welcome-card {
+            background: linear-gradient(135deg, #14171c 0%, #1a1f26 100%);
+            border: 1px solid #1f242d;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .welcome-card h2 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        .welcome-card p {
+            color: #90a4ae;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        /* 📱 BARRA DE BOTONES INFERIOR FIJA (TU PLANO) */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 65px;
+            background-color: #14171c;
+            border-top: 1px solid #1f242d;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+            padding-bottom: env(safe-area-inset-bottom); /* Ajuste para la barra del iPhone */
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #90a4ae;
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 500;
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 25%;
+        }
+        .nav-item.active {
+            color: #00e676; /* Verde institucional activo */
+        }
+        .nav-icon {
+            font-size: 1.3rem;
+            margin-bottom: 3px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>📡 ALPHA RADAR</h1>
+        <p>Sistema de Captura de Momentum • V2.0</p>
+    </header>
+
+    <div class="container">
+        <div class="welcome-card">
+            <h2>Estructura Base Lista</h2>
+            <p>La carrocería visual se ha desplegado correctamente. Los botones inferiores están fijos en su posición táctil.</p>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <button class="nav-item active">
+            <span class="nav-icon">📡</span>
+            <span>Radar</span>
+        </button>
+        <button class="nav-item">
+            <span class="nav-icon">⚡</span>
+            <span>Estrategias</span>
+        </button>
+        <button class="nav-item">
+            <span class="nav-icon">📰</span>
+            <span>Noticias</span>
+        </button>
+        <button class="nav-item">
+            <span class="nav-icon">📝</span>
+            <span>Bitácora</span>
+        </button>
+    </nav>
+
+</body>
+</html>
