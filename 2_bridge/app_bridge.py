@@ -12,8 +12,8 @@ HTML_LAYOUT = """
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alpha Radar Control</title>
     <style>
-        body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; display: flex; flex-direction: column; items-center: center; justify-content: center; min-height: 100vh; margin: 0; padding: 1rem; box-sizing: border-box; }
-        .card { width: 100%; max-width: 500px; background-color: #111827; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid #1f2937; margin: auto; }
+        body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 1rem; box-sizing: border-box; }
+        .card { width: 100%; max-width: 500px; background-color: #111827; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid #1f2937; }
         .btn-scan { width: 100%; padding: 1rem; background-color: #1e293b; border: 2px solid #3b82f6; border-radius: 0.75rem; font-weight: bold; color: white; cursor: pointer; text-align: left; margin-bottom: 1rem; transition: all 0.2s; }
         .btn-scan:hover { background-color: #1e3a8a; }
         .btn-scan:active { transform: scale(0.98); }
@@ -35,19 +35,19 @@ HTML_LAYOUT = """
     <script>
         function ejecutarEscaner(archivoScript) {
             const consola = document.getElementById('consola');
-            consola.innerHTML = `> Conectando con el puente...\\n> Iniciando escaneo mediante \${archivoScript}...\\n> Procesando mercado con tus filtros ($5 - $40)...`;
+            consola.innerHTML = "> Conectando con el puente...\\n> Iniciando escaneo...\\n> Procesando mercado ($5 - $40)...";
             
-            fetch(`/scan?script=\${archivoScript}`)
-                .then(res => res.json())
-                .then(data => {
+            fetch('/scan?script=' + archivoScript)
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
                     if(data.status === "success") {
                         consola.innerHTML = data.output;
                     } else {
-                        consola.innerHTML = `> ERROR EN EL ESCÁNER:\\n\\n\${data.error}`;
+                        consola.innerHTML = "> ERROR EN EL ESCÁNER:\\n\\n" + data.error;
                     }
                 })
-                .catch(err => {
-                    consola.innerHTML = `> Error de conexión con Render: \${err}`;
+                .catch(function(err) {
+                    consola.innerHTML = "> Error de conexión con Render: " + err;
                 });
         }
     </script>
@@ -64,13 +64,13 @@ def scan():
     from flask import request
     script_name = request.args.get('script')
     
-    # Apuntar directamente a la carpeta donde están tus tres scripts de escaneo
+    # Ruta exacta hacia la carpeta interna de tus escáneres
     script_path = os.path.join(os.getcwd(), '1_scanner', '1_scanner', script_name)
     
     if not os.path.exists(script_path):
         return jsonify({
             "status": "error", 
-            "error": f"No se encontró el archivo en la ruta: {script_path}"
+            "error": "No se encontró el archivo en la ruta: " + script_path
         })
         
     try:
@@ -85,9 +85,10 @@ def scan():
             "output": resultado.stdout if resultado.stdout else "El escáner corrió pero no arrojó texto en consola."
         })
     except subprocess.CalledProcessError as e:
+        error_msg = e.stderr if e.stderr else e.stdout
         return jsonify({
             "status": "error", 
-            "error": f"Error de ejecución:\\n{e.stderr if e.stderr else e.stdout}"
+            "error": "Error de ejecución del script:\\n" + error_msg
         })
     except Exception as e:
         return jsonify({"status": "error", "error": str(e)})
