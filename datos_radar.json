@@ -1,20 +1,20 @@
 [
     {
         "ticker": "AAL",
-        "precio_actual": 13.41,
-        "vol_rel": 1.6,
+        "precio_actual": 14.65,
+        "vol_rel": 1.74,
         "recomendacion": "BUY",
         "target_price": 15.53,
-        "rango_entrada": "$13.28 - $13.54",
-        "rango_salida": "$13.01"
+        "rango_entrada": "$14.5 - $14.8",
+        "rango_salida": "$14.21"
     },
     {
-        "ticker": "DKNG",
-        "precio_actual": 28.86,
-        "vol_rel": 1.99,
+        "ticker": "XPEV",
+        "precio_actual": 14.51,
+        "vol_rel": 1.42,
         "recomendacion": "BUY",
-        "target_price": 34.88,
-        "rango_entrada": "$28.57 - $29.15",
-        "rango_salida": "$27.99"
+        "target_price": 23.24,
+        "rango_entrada": "$14.36 - $14.66",
+        "rango_salida": "$14.07"
     }
 ]
