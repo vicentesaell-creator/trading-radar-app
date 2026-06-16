@@ -1,38 +1,38 @@
 [
     {
-        "ticker": "AAL",
-        "precio_actual": 15.46,
-        "vol_rel": 1.79,
-        "recomendacion": "BUY",
-        "target_price": 15.53,
-        "rango_entrada": "$15.31 - $15.61",
-        "rango_salida": "$15.0"
+        "ticker": "SOFI",
+        "precio_actual": 17.71,
+        "vol_rel": 1.38,
+        "recomendacion": "HOLD",
+        "target_price": 21.0,
+        "rango_entrada": "$17.53 - $17.89",
+        "rango_salida": "$17.18"
     },
     {
-        "ticker": "VALE",
-        "precio_actual": 16.0,
-        "vol_rel": 1.46,
+        "ticker": "AAL",
+        "precio_actual": 15.71,
+        "vol_rel": 1.28,
         "recomendacion": "BUY",
-        "target_price": 17.32,
-        "rango_entrada": "$15.84 - $16.16",
-        "rango_salida": "$15.52"
+        "target_price": 15.53,
+        "rango_entrada": "$15.55 - $15.87",
+        "rango_salida": "$15.24"
     },
     {
         "ticker": "PBR",
-        "precio_actual": 17.34,
-        "vol_rel": 1.34,
+        "precio_actual": 17.05,
+        "vol_rel": 1.43,
         "recomendacion": "BUY",
         "target_price": 22.84,
-        "rango_entrada": "$17.17 - $17.51",
-        "rango_salida": "$16.82"
+        "rango_entrada": "$16.88 - $17.22",
+        "rango_salida": "$16.54"
     },
     {
         "ticker": "SNAP",
-        "precio_actual": 5.71,
-        "vol_rel": 1.21,
+        "precio_actual": 5.16,
+        "vol_rel": 2.24,
         "recomendacion": "HOLD",
         "target_price": 7.63,
-        "rango_entrada": "$5.65 - $5.77",
-        "rango_salida": "$5.54"
+        "rango_entrada": "$5.11 - $5.21",
+        "rango_salida": "$5.01"
     }
 ]
