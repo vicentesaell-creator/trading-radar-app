@@ -1,1 +1,20 @@
-[]
+[
+    {
+        "ticker": "AAL",
+        "precio_actual": 16.08,
+        "vol_rel": 1.58,
+        "recomendacion": "BUY",
+        "target_price": 15.61,
+        "rango_entrada": "$15.92 - $16.24",
+        "rango_salida": "$15.6"
+    },
+    {
+        "ticker": "MARA",
+        "precio_actual": 14.85,
+        "vol_rel": 1.67,
+        "recomendacion": "NONE",
+        "target_price": 17.57,
+        "rango_entrada": "$14.7 - $15.0",
+        "rango_salida": "$14.4"
+    }
+]
