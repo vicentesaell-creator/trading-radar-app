@@ -1,1 +1,11 @@
-[]
+[
+    {
+        "ticker": "OPEN",
+        "precio_actual": 5.08,
+        "vol_rel": 1.37,
+        "recomendacion": "HOLD",
+        "target_price": 4.82,
+        "rango_entrada": "$5.03 - $5.13",
+        "rango_salida": "$4.93"
+    }
+]
