@@ -1,1 +1,11 @@
-[]
+[
+    {
+        "ticker": "XPEV",
+        "precio_actual": 13.08,
+        "vol_rel": 1.5,
+        "recomendacion": "BUY",
+        "target_price": 22.53,
+        "rango_entrada": "$12.95 - $13.21",
+        "rango_salida": "$12.69"
+    }
+]
