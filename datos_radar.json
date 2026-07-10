@@ -1,1 +1,29 @@
-[]
+[
+    {
+        "ticker": "PBR",
+        "precio_actual": 17.03,
+        "vol_rel": 1.28,
+        "recomendacion": "BUY",
+        "target_price": 22.79,
+        "rango_entrada": "$16.86 - $17.2",
+        "rango_salida": "$16.52"
+    },
+    {
+        "ticker": "MARA",
+        "precio_actual": 13.22,
+        "vol_rel": 1.79,
+        "recomendacion": "BUY",
+        "target_price": 18.4,
+        "rango_entrada": "$13.09 - $13.35",
+        "rango_salida": "$12.82"
+    },
+    {
+        "ticker": "OPEN",
+        "precio_actual": 5.3,
+        "vol_rel": 1.67,
+        "recomendacion": "NONE",
+        "target_price": 4.82,
+        "rango_entrada": "$5.25 - $5.35",
+        "rango_salida": "$5.14"
+    }
+]
