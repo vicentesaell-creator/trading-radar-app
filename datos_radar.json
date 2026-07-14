@@ -1,1 +1,11 @@
-[]
+[
+    {
+        "ticker": "PBR",
+        "precio_actual": 17.88,
+        "vol_rel": 1.31,
+        "recomendacion": "BUY",
+        "target_price": 22.81,
+        "rango_entrada": "$17.7 - $18.06",
+        "rango_salida": "$17.34"
+    }
+]
