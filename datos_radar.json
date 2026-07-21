@@ -1,11 +1,11 @@
 [
     {
-        "ticker": "LCID",
-        "precio_actual": 7.36,
-        "vol_rel": 1.82,
-        "recomendacion": "HOLD",
-        "target_price": 8.3,
-        "rango_entrada": "$7.29 - $7.43",
-        "rango_salida": "$7.14"
+        "ticker": "MARA",
+        "precio_actual": 11.67,
+        "vol_rel": 1.28,
+        "recomendacion": "BUY",
+        "target_price": 18.13,
+        "rango_entrada": "$11.55 - $11.79",
+        "rango_salida": "$11.32"
     }
 ]
