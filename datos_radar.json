@@ -1,11 +1,20 @@
 [
     {
+        "ticker": "CELH",
+        "precio_actual": 28.02,
+        "vol_rel": 1.51,
+        "recomendacion": "BUY",
+        "target_price": 55.48,
+        "rango_entrada": "$27.74 - $28.3",
+        "rango_salida": "$27.18"
+    },
+    {
         "ticker": "MARA",
-        "precio_actual": 11.67,
-        "vol_rel": 1.28,
+        "precio_actual": 12.25,
+        "vol_rel": 1.98,
         "recomendacion": "BUY",
         "target_price": 18.13,
-        "rango_entrada": "$11.55 - $11.79",
-        "rango_salida": "$11.32"
+        "rango_entrada": "$12.13 - $12.37",
+        "rango_salida": "$11.88"
     }
 ]
