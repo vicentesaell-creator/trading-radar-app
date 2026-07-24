@@ -1,38 +1,38 @@
 [
     {
         "ticker": "CELH",
-        "precio_actual": 28.47,
-        "vol_rel": 1.55,
+        "precio_actual": 27.17,
+        "vol_rel": 1.2,
         "recomendacion": "BUY",
         "target_price": 55.24,
-        "rango_entrada": "$28.19 - $28.75",
-        "rango_salida": "$27.62"
+        "rango_entrada": "$26.9 - $27.44",
+        "rango_salida": "$26.35"
     },
     {
         "ticker": "F",
-        "precio_actual": 14.42,
-        "vol_rel": 1.26,
+        "precio_actual": 14.15,
+        "vol_rel": 1.31,
         "recomendacion": "HOLD",
         "target_price": 15.05,
-        "rango_entrada": "$14.28 - $14.56",
-        "rango_salida": "$13.99"
+        "rango_entrada": "$14.01 - $14.29",
+        "rango_salida": "$13.73"
+    },
+    {
+        "ticker": "VALE",
+        "precio_actual": 14.83,
+        "vol_rel": 1.85,
+        "recomendacion": "BUY",
+        "target_price": 16.94,
+        "rango_entrada": "$14.68 - $14.98",
+        "rango_salida": "$14.39"
     },
     {
         "ticker": "RIOT",
-        "precio_actual": 23.38,
-        "vol_rel": 1.61,
+        "precio_actual": 23.86,
+        "vol_rel": 1.35,
         "recomendacion": "STRONG_BUY",
         "target_price": 29.45,
-        "rango_entrada": "$23.15 - $23.61",
-        "rango_salida": "$22.68"
-    },
-    {
-        "ticker": "DKNG",
-        "precio_actual": 22.83,
-        "vol_rel": 1.66,
-        "recomendacion": "BUY",
-        "target_price": 34.87,
-        "rango_entrada": "$22.6 - $23.06",
-        "rango_salida": "$22.15"
+        "rango_entrada": "$23.62 - $24.1",
+        "rango_salida": "$23.14"
     }
 ]
