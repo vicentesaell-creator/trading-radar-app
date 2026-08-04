@@ -1,1 +1,56 @@
-[]
+[
+    {
+        "ticker": "CELH",
+        "precio_actual": 28.23,
+        "vol_rel": 1.67,
+        "recomendacion": "BUY",
+        "target_price": 54.33,
+        "rango_entrada": "$27.95 - $28.51",
+        "rango_salida": "$27.38"
+    },
+    {
+        "ticker": "VALE",
+        "precio_actual": 14.58,
+        "vol_rel": 1.36,
+        "recomendacion": "BUY",
+        "target_price": 16.87,
+        "rango_entrada": "$14.43 - $14.73",
+        "rango_salida": "$14.14"
+    },
+    {
+        "ticker": "XPEV",
+        "precio_actual": 12.37,
+        "vol_rel": 1.56,
+        "recomendacion": "BUY",
+        "target_price": 22.45,
+        "rango_entrada": "$12.25 - $12.49",
+        "rango_salida": "$12.0"
+    },
+    {
+        "ticker": "SNAP",
+        "precio_actual": 5.04,
+        "vol_rel": 2.6,
+        "recomendacion": "HOLD",
+        "target_price": 7.23,
+        "rango_entrada": "$4.99 - $5.09",
+        "rango_salida": "$4.89"
+    },
+    {
+        "ticker": "PINS",
+        "precio_actual": 24.16,
+        "vol_rel": 1.24,
+        "recomendacion": "BUY",
+        "target_price": 27.64,
+        "rango_entrada": "$23.92 - $24.4",
+        "rango_salida": "$23.44"
+    },
+    {
+        "ticker": "UPST",
+        "precio_actual": 29.43,
+        "vol_rel": 1.35,
+        "recomendacion": "BUY",
+        "target_price": 39.8,
+        "rango_entrada": "$29.14 - $29.72",
+        "rango_salida": "$28.55"
+    }
+]
