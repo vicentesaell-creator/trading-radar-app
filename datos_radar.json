@@ -1,47 +1,65 @@
 [
     {
         "ticker": "CELH",
-        "precio_actual": 29.54,
-        "vol_rel": 1.2,
+        "precio_actual": 29.15,
+        "vol_rel": 1.55,
         "recomendacion": "BUY",
         "target_price": 54.33,
-        "rango_entrada": "$29.24 - $29.84",
-        "rango_salida": "$28.65"
+        "rango_entrada": "$28.86 - $29.44",
+        "rango_salida": "$28.28"
+    },
+    {
+        "ticker": "VALE",
+        "precio_actual": 14.94,
+        "vol_rel": 1.52,
+        "recomendacion": "BUY",
+        "target_price": 16.79,
+        "rango_entrada": "$14.79 - $15.09",
+        "rango_salida": "$14.49"
     },
     {
         "ticker": "XPEV",
-        "precio_actual": 12.05,
-        "vol_rel": 1.51,
+        "precio_actual": 11.75,
+        "vol_rel": 1.22,
         "recomendacion": "BUY",
-        "target_price": 22.21,
-        "rango_entrada": "$11.93 - $12.17",
-        "rango_salida": "$11.69"
+        "target_price": 22.05,
+        "rango_entrada": "$11.63 - $11.87",
+        "rango_salida": "$11.4"
     },
     {
-        "ticker": "CHPT",
-        "precio_actual": 5.87,
-        "vol_rel": 1.33,
-        "recomendacion": "NONE",
-        "target_price": 6.58,
-        "rango_entrada": "$5.81 - $5.93",
-        "rango_salida": "$5.69"
+        "ticker": "RIOT",
+        "precio_actual": 21.5,
+        "vol_rel": 1.58,
+        "recomendacion": "STRONG_BUY",
+        "target_price": 29.66,
+        "rango_entrada": "$21.28 - $21.72",
+        "rango_salida": "$20.86"
+    },
+    {
+        "ticker": "DKNG",
+        "precio_actual": 21.76,
+        "vol_rel": 2.25,
+        "recomendacion": "BUY",
+        "target_price": 34.84,
+        "rango_entrada": "$21.54 - $21.98",
+        "rango_salida": "$21.11"
     },
     {
         "ticker": "SNAP",
-        "precio_actual": 5.79,
-        "vol_rel": 2.37,
+        "precio_actual": 5.33,
+        "vol_rel": 1.9,
         "recomendacion": "HOLD",
-        "target_price": 7.27,
-        "rango_entrada": "$5.73 - $5.85",
-        "rango_salida": "$5.62"
+        "target_price": 7.21,
+        "rango_entrada": "$5.28 - $5.38",
+        "rango_salida": "$5.17"
     },
     {
         "ticker": "PINS",
-        "precio_actual": 25.58,
-        "vol_rel": 1.96,
+        "precio_actual": 23.36,
+        "vol_rel": 1.98,
         "recomendacion": "BUY",
-        "target_price": 28.31,
-        "rango_entrada": "$25.32 - $25.84",
-        "rango_salida": "$24.81"
+        "target_price": 27.64,
+        "rango_entrada": "$23.13 - $23.59",
+        "rango_salida": "$22.66"
     }
 ]
