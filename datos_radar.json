@@ -1,29 +1,29 @@
 [
     {
         "ticker": "CELH",
-        "precio_actual": 23.77,
-        "vol_rel": 4.37,
+        "precio_actual": 27.77,
+        "vol_rel": 2.92,
         "recomendacion": "BUY",
-        "target_price": 53.06,
-        "rango_entrada": "$23.53 - $24.01",
-        "rango_salida": "$23.06"
+        "target_price": 43.95,
+        "rango_entrada": "$27.49 - $28.05",
+        "rango_salida": "$26.94"
+    },
+    {
+        "ticker": "PBR",
+        "precio_actual": 17.96,
+        "vol_rel": 1.91,
+        "recomendacion": "BUY",
+        "target_price": 22.19,
+        "rango_entrada": "$17.78 - $18.14",
+        "rango_salida": "$17.42"
     },
     {
         "ticker": "DKNG",
-        "precio_actual": 22.17,
-        "vol_rel": 2.02,
+        "precio_actual": 24.03,
+        "vol_rel": 2.68,
         "recomendacion": "BUY",
-        "target_price": 34.78,
-        "rango_entrada": "$21.95 - $22.39",
-        "rango_salida": "$21.5"
-    },
-    {
-        "ticker": "PINS",
-        "precio_actual": 23.33,
-        "vol_rel": 1.33,
-        "recomendacion": "BUY",
-        "target_price": 28.31,
-        "rango_entrada": "$23.1 - $23.56",
-        "rango_salida": "$22.63"
+        "target_price": 34.67,
+        "rango_entrada": "$23.79 - $24.27",
+        "rango_salida": "$23.31"
     }
 ]
