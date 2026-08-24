@@ -1,47 +1,29 @@
 [
     {
-        "ticker": "LCID",
-        "precio_actual": 5.62,
-        "vol_rel": 1.53,
-        "recomendacion": "HOLD",
-        "target_price": 7.9,
-        "rango_entrada": "$5.56 - $5.68",
-        "rango_salida": "$5.45"
+        "ticker": "AAL",
+        "precio_actual": 13.82,
+        "vol_rel": 1.2,
+        "recomendacion": "BUY",
+        "target_price": 18.93,
+        "rango_entrada": "$13.68 - $13.96",
+        "rango_salida": "$13.41"
     },
     {
-        "ticker": "VALE",
-        "precio_actual": 14.23,
-        "vol_rel": 1.72,
+        "ticker": "XPEV",
+        "precio_actual": 12.19,
+        "vol_rel": 1.44,
         "recomendacion": "BUY",
-        "target_price": 16.74,
-        "rango_entrada": "$14.09 - $14.37",
-        "rango_salida": "$13.8"
-    },
-    {
-        "ticker": "PBR",
-        "precio_actual": 19.01,
-        "vol_rel": 1.69,
-        "recomendacion": "BUY",
-        "target_price": 22.02,
-        "rango_entrada": "$18.82 - $19.2",
-        "rango_salida": "$18.44"
+        "target_price": 22.13,
+        "rango_entrada": "$12.07 - $12.31",
+        "rango_salida": "$11.82"
     },
     {
         "ticker": "MARA",
-        "precio_actual": 11.15,
-        "vol_rel": 1.77,
+        "precio_actual": 11.26,
+        "vol_rel": 2.18,
         "recomendacion": "BUY",
         "target_price": 17.99,
-        "rango_entrada": "$11.04 - $11.26",
-        "rango_salida": "$10.82"
-    },
-    {
-        "ticker": "UPST",
-        "precio_actual": 28.86,
-        "vol_rel": 1.58,
-        "recomendacion": "BUY",
-        "target_price": 40.6,
-        "rango_entrada": "$28.57 - $29.15",
-        "rango_salida": "$27.99"
+        "rango_entrada": "$11.15 - $11.37",
+        "rango_salida": "$10.92"
     }
 ]
