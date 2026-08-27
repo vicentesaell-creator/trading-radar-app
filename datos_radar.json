@@ -1,29 +1,20 @@
 [
     {
-        "ticker": "AAL",
-        "precio_actual": 13.95,
+        "ticker": "LCID",
+        "precio_actual": 5.09,
+        "vol_rel": 2.79,
+        "recomendacion": "HOLD",
+        "target_price": 8.11,
+        "rango_entrada": "$5.04 - $5.14",
+        "rango_salida": "$4.94"
+    },
+    {
+        "ticker": "MARA",
+        "precio_actual": 11.87,
         "vol_rel": 1.23,
         "recomendacion": "BUY",
-        "target_price": 18.59,
-        "rango_entrada": "$13.81 - $14.09",
-        "rango_salida": "$13.53"
-    },
-    {
-        "ticker": "XPEV",
-        "precio_actual": 11.6,
-        "vol_rel": 1.63,
-        "recomendacion": "BUY",
-        "target_price": 21.56,
-        "rango_entrada": "$11.48 - $11.72",
-        "rango_salida": "$11.25"
-    },
-    {
-        "ticker": "PBR",
-        "precio_actual": 17.85,
-        "vol_rel": 1.71,
-        "recomendacion": "BUY",
-        "target_price": 22.03,
-        "rango_entrada": "$17.67 - $18.03",
-        "rango_salida": "$17.31"
+        "target_price": 17.99,
+        "rango_entrada": "$11.75 - $11.99",
+        "rango_salida": "$11.51"
     }
 ]
