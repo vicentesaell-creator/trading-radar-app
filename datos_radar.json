@@ -1,20 +1,29 @@
 [
     {
-        "ticker": "LCID",
-        "precio_actual": 5.09,
-        "vol_rel": 2.79,
-        "recomendacion": "HOLD",
-        "target_price": 8.11,
-        "rango_entrada": "$5.04 - $5.14",
-        "rango_salida": "$4.94"
+        "ticker": "VALE",
+        "precio_actual": 15.03,
+        "vol_rel": 1.41,
+        "recomendacion": "BUY",
+        "target_price": 16.74,
+        "rango_entrada": "$14.88 - $15.18",
+        "rango_salida": "$14.58"
     },
     {
-        "ticker": "MARA",
-        "precio_actual": 11.87,
-        "vol_rel": 1.23,
+        "ticker": "CHPT",
+        "precio_actual": 5.57,
+        "vol_rel": 1.25,
+        "recomendacion": "HOLD",
+        "target_price": 6.9,
+        "rango_entrada": "$5.51 - $5.63",
+        "rango_salida": "$5.4"
+    },
+    {
+        "ticker": "DKNG",
+        "precio_actual": 25.26,
+        "vol_rel": 1.51,
         "recomendacion": "BUY",
-        "target_price": 17.99,
-        "rango_entrada": "$11.75 - $11.99",
-        "rango_salida": "$11.51"
+        "target_price": 34.98,
+        "rango_entrada": "$25.01 - $25.51",
+        "rango_salida": "$24.5"
     }
 ]
