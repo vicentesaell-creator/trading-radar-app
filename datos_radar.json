@@ -1,1 +1,11 @@
-[]
+[
+    {
+        "ticker": "CHPT",
+        "precio_actual": 8.46,
+        "vol_rel": 13.52,
+        "recomendacion": "NONE",
+        "target_price": 7.0,
+        "rango_entrada": "$8.38 - $8.54",
+        "rango_salida": "$8.21"
+    }
+]
