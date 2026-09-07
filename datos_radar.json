@@ -1,11 +1,20 @@
 [
     {
+        "ticker": "AAL",
+        "precio_actual": 13.13,
+        "vol_rel": 1.25,
+        "recomendacion": "BUY",
+        "target_price": 18.37,
+        "rango_entrada": "$13.0 - $13.26",
+        "rango_salida": "$12.74"
+    },
+    {
         "ticker": "CHPT",
-        "precio_actual": 9.66,
-        "vol_rel": 2.16,
-        "recomendacion": "NONE",
-        "target_price": 7.0,
-        "rango_entrada": "$9.56 - $9.76",
-        "rango_salida": "$9.37"
+        "precio_actual": 9.89,
+        "vol_rel": 4.11,
+        "recomendacion": "HOLD",
+        "target_price": 7.3,
+        "rango_entrada": "$9.79 - $9.99",
+        "rango_salida": "$9.59"
     }
 ]
