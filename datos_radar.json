@@ -1,1 +1,11 @@
-[]
+[
+    {
+        "ticker": "RIOT",
+        "precio_actual": 16.53,
+        "vol_rel": 1.34,
+        "recomendacion": "STRONG_BUY",
+        "target_price": 31.54,
+        "rango_entrada": "$16.36 - $16.7",
+        "rango_salida": "$16.03"
+    }
+]
