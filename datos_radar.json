@@ -1,20 +1,11 @@
 [
     {
-        "ticker": "VALE",
-        "precio_actual": 11.98,
-        "vol_rel": 1.68,
-        "recomendacion": "BUY",
-        "target_price": 16.22,
-        "rango_entrada": "$11.86 - $12.1",
-        "rango_salida": "$11.62"
-    },
-    {
-        "ticker": "PBR",
-        "precio_actual": 22.16,
-        "vol_rel": 2.51,
-        "recomendacion": "BUY",
-        "target_price": 23.95,
-        "rango_entrada": "$21.94 - $22.38",
-        "rango_salida": "$21.5"
+        "ticker": "SOFI",
+        "precio_actual": 16.69,
+        "vol_rel": 2.08,
+        "recomendacion": "HOLD",
+        "target_price": 20.22,
+        "rango_entrada": "$16.52 - $16.86",
+        "rango_salida": "$16.19"
     }
 ]
