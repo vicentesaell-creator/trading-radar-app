@@ -1,11 +1,1 @@
-[
-    {
-        "ticker": "SOFI",
-        "precio_actual": 16.69,
-        "vol_rel": 2.08,
-        "recomendacion": "HOLD",
-        "target_price": 20.22,
-        "rango_entrada": "$16.52 - $16.86",
-        "rango_salida": "$16.19"
-    }
-]
+[]
