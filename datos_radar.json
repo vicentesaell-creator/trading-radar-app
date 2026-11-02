@@ -1,1 +1,20 @@
-[]
+[
+    {
+        "ticker": "CHPT",
+        "precio_actual": 10.02,
+        "vol_rel": 1.23,
+        "recomendacion": "HOLD",
+        "target_price": 7.5,
+        "rango_entrada": "$9.92 - $10.12",
+        "rango_salida": "$9.72"
+    },
+    {
+        "ticker": "UPST",
+        "precio_actual": 21.71,
+        "vol_rel": 2.43,
+        "recomendacion": "BUY",
+        "target_price": 37.94,
+        "rango_entrada": "$21.49 - $21.93",
+        "rango_salida": "$21.06"
+    }
+]
