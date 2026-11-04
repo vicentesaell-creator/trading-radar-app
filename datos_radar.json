@@ -1,11 +1,11 @@
 [
     {
-        "ticker": "UPST",
-        "precio_actual": 21.73,
-        "vol_rel": 1.42,
-        "recomendacion": "BUY",
-        "target_price": 37.94,
-        "rango_entrada": "$21.51 - $21.95",
-        "rango_salida": "$21.08"
+        "ticker": "RIOT",
+        "precio_actual": 15.97,
+        "vol_rel": 2.9,
+        "recomendacion": "STRONG_BUY",
+        "target_price": 28.34,
+        "rango_entrada": "$15.81 - $16.13",
+        "rango_salida": "$15.49"
     }
 ]
