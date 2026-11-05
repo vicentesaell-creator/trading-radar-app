@@ -1,11 +1,11 @@
 [
     {
-        "ticker": "RIOT",
-        "precio_actual": 15.97,
-        "vol_rel": 2.9,
-        "recomendacion": "STRONG_BUY",
-        "target_price": 28.34,
-        "rango_entrada": "$15.81 - $16.13",
-        "rango_salida": "$15.49"
+        "ticker": "XPEV",
+        "precio_actual": 9.44,
+        "vol_rel": 1.43,
+        "recomendacion": "BUY",
+        "target_price": 18.0,
+        "rango_entrada": "$9.35 - $9.53",
+        "rango_salida": "$9.16"
     }
 ]
