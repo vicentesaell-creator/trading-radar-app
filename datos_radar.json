@@ -1,11 +1,1 @@
-[
-    {
-        "ticker": "MARA",
-        "precio_actual": 7.02,
-        "vol_rel": 1.2,
-        "recomendacion": "BUY",
-        "target_price": 17.69,
-        "rango_entrada": "$6.95 - $7.09",
-        "rango_salida": "$6.81"
-    }
-]
+[]
