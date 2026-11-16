@@ -1,1 +1,20 @@
-[]
+[
+    {
+        "ticker": "VALE",
+        "precio_actual": 10.51,
+        "vol_rel": 1.24,
+        "recomendacion": "BUY",
+        "target_price": 14.97,
+        "rango_entrada": "$10.4 - $10.62",
+        "rango_salida": "$10.19"
+    },
+    {
+        "ticker": "XPEV",
+        "precio_actual": 9.72,
+        "vol_rel": 1.63,
+        "recomendacion": "BUY",
+        "target_price": 17.98,
+        "rango_entrada": "$9.62 - $9.82",
+        "rango_salida": "$9.43"
+    }
+]
