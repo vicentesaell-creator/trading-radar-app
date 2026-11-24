@@ -1,11 +1,20 @@
 [
     {
-        "ticker": "F",
-        "precio_actual": 11.65,
-        "vol_rel": 1.29,
+        "ticker": "VALE",
+        "precio_actual": 9.34,
+        "vol_rel": 2.0,
         "recomendacion": "BUY",
-        "target_price": 15.02,
-        "rango_entrada": "$11.53 - $11.77",
-        "rango_salida": "$11.3"
+        "target_price": 14.58,
+        "rango_entrada": "$9.25 - $9.43",
+        "rango_salida": "$9.06"
+    },
+    {
+        "ticker": "PINS",
+        "precio_actual": 18.52,
+        "vol_rel": 1.55,
+        "recomendacion": "BUY",
+        "target_price": 25.03,
+        "rango_entrada": "$18.33 - $18.71",
+        "rango_salida": "$17.96"
     }
 ]
